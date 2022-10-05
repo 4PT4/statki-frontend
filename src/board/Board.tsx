@@ -9,17 +9,12 @@ function Board() {
   }
   const canvas = useRef<HTMLCanvasElement | null>(null)
   const canvasContexReference = useRef<CanvasRenderingContext2D | null>(null)
-  const tileSize = 40
   let hits: any[][] = []
-  // const boardWidth = 400, boardHeight = 400;
+  const tileSize = 40
   const boardSize = 400
+  const tileCount = boardSize / tileSize
   const warShips = [{x: 5, y:5, length: 3, orientation: Orientation.VERTICAL}]
-  let currentShipIndex: number
-  let startX: number, startY: number
-  let is_dragging = false
-  let shipsOnBoard: any[] = []
   let offsetLeft: number, offsetTop: number
-  let first = true
   let lastPosition = {x: 0, y:0}
   let context: CanvasRenderingContext2D | null
   useEffect(()=>{
@@ -28,8 +23,6 @@ function Board() {
       context = canvasContexReference.current
       offsetLeft = canvas.current.offsetLeft
       offsetTop = canvas.current.offsetTop
-      // console.log(tiles);
-      // console.log(first);
       
       drawGrid()
       
@@ -38,11 +31,11 @@ function Board() {
   }, [])
   let drawGrid = ()=>{
     hits = []
-    for(let x=0; x<boardSize/tileSize; x++){
+    for(let x=0; x<tileCount; x++){
       hits.push( [] );
-      for(let y=0; y<boardSize/tileSize; y++){
+      for(let y=0; y<tileCount; y++){
         hits[x].push( {} );
-        context!.strokeRect(x*tileSize, y*tileSize, tileSize, tileSize)
+        drawSquer(x*tileSize, y*tileSize)
       }
     }
   }
@@ -51,17 +44,9 @@ function Board() {
   let mouseX = Math.floor((e.clientX - offsetLeft)/tileSize)
   let mouseY = Math.floor((e.clientY - offsetTop)/tileSize)
   hits[mouseX][mouseY] = {x: mouseX * tileSize, y: mouseY * tileSize, width: tileSize, height: tileSize}
-  context!.beginPath();
-
-  context!.moveTo(hits[mouseX][mouseY].x, hits[mouseX][mouseY].y);
-  context!.lineTo(hits[mouseX][mouseY].x + tileSize, hits[mouseX][mouseY].y + tileSize);
-
-  context!.moveTo(hits[mouseX][mouseY].x + tileSize, hits[mouseX][mouseY].y);
-  context!.lineTo(hits[mouseX][mouseY].x, hits[mouseX][mouseY].y + tileSize);
-  context!.stroke();
-  lastPosition = {x: mouseX, y: mouseY}
+  drawX(hits[mouseX][mouseY].x,hits[mouseX][mouseY].y)
   console.log(lastPosition);
-  
+  lastPosition = {x: mouseX, y: mouseY}
   
 
  }
@@ -69,13 +54,23 @@ function Board() {
  let mouseMove = (e: React.MouseEvent<HTMLElement>)=>{
   let mouseX = Math.floor((e.clientX - offsetLeft)/tileSize)
   let mouseY = Math.floor((e.clientY - offsetTop)/tileSize)
+  if(mouseX < 0 || mouseX > 9 || mouseY < 0 || mouseY > 9 ){
+    clearElement(lastPosition.x*tileSize, lastPosition.y*tileSize)
+    drawSquer(lastPosition.x*tileSize, lastPosition.y*tileSize)
+    if(Object.keys(hits[lastPosition.x][lastPosition.y]).length !== 0){
+      drawX(lastPosition.x * tileSize, lastPosition.y * tileSize)
+    }
+    return
+  }
+  
   
   if(lastPosition.x != mouseX || lastPosition.y != mouseY){
-    context!.beginPath()
-    context!.arc((mouseX*tileSize)+(tileSize/2), (mouseY*tileSize)+(tileSize/2), 3, 0, 2 * Math.PI);
-    context!.fill()
-    context!.stroke()
-    context!.clearRect(lastPosition.x, lastPosition.y, tileSize, tileSize)
+    drawCircle(mouseX*tileSize, mouseY*tileSize)
+    clearElement(lastPosition.x*tileSize, lastPosition.y*tileSize)
+    drawSquer(lastPosition.x*tileSize, lastPosition.y*tileSize)
+    if(Object.keys(hits[lastPosition.x][lastPosition.y]).length !== 0){
+      drawX(lastPosition.x * tileSize, lastPosition.y * tileSize)
+    }
   }
   lastPosition = {x: mouseX, y: mouseY}
   console.log(lastPosition);
@@ -85,8 +80,30 @@ function Board() {
   context?.clearRect(0, 0, 400, 400)
   drawGrid()
 }
+let drawCircle = (x: number, y: number)=>{
+  context!.beginPath()
+  context!.arc(x+(tileSize/2), y+(tileSize/2), 3, 0, 2 * Math.PI);
+  context!.fill()
+  context!.stroke()
+}
 
+let drawX = (x: number, y: number)=>{
+  context!.beginPath();
 
+  context!.moveTo(x, y);
+  context!.lineTo(x + tileSize, y + tileSize);
+
+  context!.moveTo(x + tileSize, y);
+  context!.lineTo(x, y + tileSize);
+  context!.stroke();
+  
+}
+let drawSquer = (x: number, y: number)=>{
+  context!.strokeRect(x, y, tileSize, tileSize)
+}
+let clearElement = (x: number, y: number)=>{
+  context!.clearRect(x, y, tileSize, tileSize)
+}
 
   return (
     <div className="boardComponent">
