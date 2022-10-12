@@ -9,6 +9,11 @@ function App() {
 
   return (
     <div className="App">
+      {/* http://localhost:3000 */}
+      {/* strona gry */}
+      
+      {/* http://localhost:3000/leaderboard */}
+      {/* cos co zawiera to nizej */}
       <Select setLastSeen = {setLastSeen}></Select>
       <Table lastSeen = {lastSeen}></Table>
     </div>
