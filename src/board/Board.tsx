@@ -7,20 +7,18 @@ function Board() {
     HORIZONTAL,
     VERTICAL
   }
-  
   const canvas = useRef<HTMLCanvasElement | null>(null)
   const canvasContexReference = useRef<CanvasRenderingContext2D | null>(null)
+  let hits: any[][] = []
+  let shipsOnBoard: any[][] = []
   const tileSize = 40
   const boardSize = 400
   const tileCount = boardSize / tileSize
-  const warShips = [{x: 5, y:5, shipLength: 3, orientation: Orientation.HORIZONTAL}, {x: 0, y:0, shipLength: 3, orientation: Orientation.VERTICAL}]
-  let hits: any[][] = []
-  let shipsOnBoard: any[][] = []
+  const warShips = [{x: 5, y:5, shipLength: 3, orientation: Orientation.HORIZONTAL},{x: 0, y:0, shipLength: 3, orientation: Orientation.VERTICAL}]
   let offsetLeft: number, offsetTop: number
   let lastPosition = {x: 0, y:0}
   let context: CanvasRenderingContext2D | null
   let isDragging = false
-  let isGame = false
   useEffect(()=>{
     if(canvas.current){
       canvasContexReference.current = canvas.current.getContext('2d')
@@ -29,226 +27,177 @@ function Board() {
       offsetTop = canvas.current.offsetTop
       
       drawGrid()
-      drawWarships(warShips)
+      drawWarShips(warShips)
     }
     
   }, [])
+
+  let getMousePosition = (e: React.MouseEvent<HTMLElement>)=>{
+    let mouseX = Math.floor((e.clientX - offsetLeft)/tileSize)
+    let mouseY = Math.floor((e.clientY - offsetTop)/tileSize)
+    return {mouseX, mouseY}
+  }
+
   let drawGrid = ()=>{
     hits = []
     shipsOnBoard = []
     for(let x=0; x<tileCount; x++){
       hits.push( [] );
-      shipsOnBoard.push( [] )
+      shipsOnBoard.push( [] );
       for(let y=0; y<tileCount; y++){
         hits[x].push( {} );
-        shipsOnBoard[x].push( {} )
+        shipsOnBoard[x].push( [] );
         drawSquer(x, y)
       }
     }
   }
 
-  let canvasClicked = (e: React.MouseEvent<HTMLElement>)=>{
-    let mouseX = Math.floor((e.clientX - offsetLeft)/tileSize)
-    let mouseY = Math.floor((e.clientY - offsetTop)/tileSize)
-    
-    if(isGame){
-      hits[mouseX][mouseY] = {x: mouseX, y: mouseY, width: 1, height: 1}
-      drawX(hits[mouseX][mouseY].x,hits[mouseX][mouseY].y)
-    }
-    
-    console.log(lastPosition);
-    lastPosition = {x: mouseX, y: mouseY}
-    
+ let canvasClicked = (e: React.MouseEvent<HTMLElement>)=>{
 
+  let {mouseX, mouseY} = getMousePosition(e)
+  hits[mouseX][mouseY] = {x: mouseX, y: mouseY, width: tileSize, height: tileSize}
+  drawX(hits[mouseX][mouseY].x,hits[mouseX][mouseY].y)
+  console.log(lastPosition);
+  lastPosition = {x: mouseX, y: mouseY}
+
+ }
+
+ let mouseDown = (e: React.MouseEvent<HTMLElement>)=>{
+  e.preventDefault()
+  let {mouseX, mouseY} = getMousePosition(e)
+  if(shipsOnBoard[mouseX][mouseY].length !== 0){
+    isDragging = true
   }
-  let mouseDown = (e: React.MouseEvent<HTMLElement>)=>{
-    e.preventDefault()
-    let mouseX = Math.floor((e.clientX - offsetLeft)/tileSize)
-    let mouseY = Math.floor((e.clientY - offsetTop)/tileSize)
-    if(Object.keys(shipsOnBoard[mouseX][mouseY]).length !== 0){
-      isDragging = true
+ }
+ let mouseUp = (e: React.MouseEvent<HTMLElement>)=>{
+  e.preventDefault()
+  isDragging = false
+ }
+
+ let mouseMove = (e: React.MouseEvent<HTMLElement>)=>{
+  let {mouseX, mouseY} = getMousePosition(e)
+  if(mouseX < 0 || mouseX > 9 || mouseY < 0 || mouseY > 9 ){
+    clearElement(lastPosition.x, lastPosition.y)
+    drawSquer(lastPosition.x, lastPosition.y)
+    if(Object.keys(hits[lastPosition.x][lastPosition.y]).length !== 0){
+      drawX(lastPosition.x, lastPosition.y)
     }
-    console.log(isDragging);
-    
+    return
   }
-  let mouseUp = (e: React.MouseEvent<HTMLElement>)=>{
-    e.preventDefault()
-    isDragging = false
-    console.log(isDragging);
-  }
-  let mouseMove = (e: React.MouseEvent<HTMLElement>)=>{
-    let mouseX = Math.floor((e.clientX - offsetLeft)/tileSize)
-    let mouseY = Math.floor((e.clientY - offsetTop)/tileSize)
-    if(mouseX < 0 || mouseX > 9 || mouseY < 0 || mouseY > 9 ){
-      clearElement(lastPosition.x, lastPosition.y, 1, 1)
-      drawSquer(lastPosition.x, lastPosition.y)
-      if(Object.keys(hits[lastPosition.x][lastPosition.y]).length !== 0){
-        drawX(lastPosition.x , lastPosition.y)
-      }
-      return
-    }
-    
-    
-    if(lastPosition.x !== mouseX || lastPosition.y !== mouseY){
-      clearElement(lastPosition.x, lastPosition.y, 1, 1)
-      drawSquer(lastPosition.x, lastPosition.y)
-      if(isDragging){
-        
-        let shipIndex = shipsOnBoard[lastPosition.x][lastPosition.y].shipIndex
-        let moveX = lastPosition.x - mouseX
-        let moveY = lastPosition.y - mouseY
-        let ship = warShips[shipIndex]
-        console.log(shipsOnBoard);
-        
-        
-          
-          removeShipBoard(ship)
-          if(ship.orientation === Orientation.VERTICAL){
-            fillSquer(ship.x-moveX, ship.y-moveY, 1, ship.shipLength)
-          }
-          if(ship.orientation === Orientation.HORIZONTAL){
-            fillSquer(ship.x-moveX, ship.y-moveY, ship.shipLength, 1)
-          }
-
-
-          ship.x = ship.x-moveX
-          ship.y = ship.y-moveY
-          addShipBoard(ship, shipIndex)
-        
-        
-
-      }
-      // drawCircle(mouseX*tileSize, mouseY*tileSize)
+  
+  
+  if(lastPosition.x !== mouseX || lastPosition.y !== mouseY){
+    if(isDragging){
+      let id = shipsOnBoard[lastPosition.x][lastPosition.y][0]
+      // console.log(id);
       
-      if(Object.keys(hits[lastPosition.x][lastPosition.y]).length !== 0){
-        drawX(lastPosition.x, lastPosition.y )
-      }
-      if(Object.keys(shipsOnBoard[lastPosition.x][lastPosition.y]).length !== 0){
-        fillSquer(lastPosition.x, lastPosition.y, 1, 1)
-      }
+      clearShip(id)
+      console.log(shipsOnBoard);
+      
+      let moveX = lastPosition.x - mouseX
+      let moveY = lastPosition.y - mouseY
+      warShips[id].x = warShips[id].x - moveX
+      warShips[id].y = warShips[id].y - moveY
+      drawSingleShip(id)
     }
-    lastPosition = {x: mouseX, y: mouseY}
-    console.log(lastPosition);
-  }
 
-  let resetBoard = ()=>{
+
+    drawCircle(mouseX, mouseY)
+    clearElement(lastPosition.x, lastPosition.y)
+    drawSquer(lastPosition.x, lastPosition.y)
+    if(Object.keys(hits[lastPosition.x][lastPosition.y]).length !== 0){
+      drawX(lastPosition.x, lastPosition.y)
+    }
+    console.log(shipsOnBoard[lastPosition.x][lastPosition.y]);
+    
+    if(shipsOnBoard[lastPosition.x][lastPosition.y].length !== 0){
+      drawFillSquer(lastPosition.x, lastPosition.y)
+    }
+  }
+  lastPosition = {x: mouseX, y: mouseY}
+  // console.log(lastPosition);
+ }
+
+ let resetBoard = ()=>{
   context?.clearRect(0, 0, 400, 400)
   drawGrid()
-  }
+}
+let drawCircle = (x: number, y: number)=>{
+  context!.beginPath()
+  context!.arc((x*tileSize)+(tileSize/2), (y*tileSize)+(tileSize/2), 3, 0, 2 * Math.PI);
+  context!.fill()
+  context!.stroke()
+}
 
-  let drawCircle = (x: number, y: number)=>{
-    context!.beginPath()
-    context!.arc(x+(tileSize/2), y+(tileSize/2), 3, 0, 2 * Math.PI);
-    context!.fill()
-    context!.stroke()
-  }
+let drawX = (x: number, y: number)=>{
+  context!.beginPath();
+  y = y*tileSize
+  x= x*tileSize
+  context!.moveTo(x, y);
+  context!.lineTo(x + tileSize, y + tileSize);
 
-  let drawX = (x: number, y: number)=>{
-    context!.beginPath();
-    x = x*tileSize
-    y = y*tileSize
-    context!.moveTo(x, y);
-    context!.lineTo(x + tileSize, y + tileSize);
+  context!.moveTo(x + tileSize, y);
+  context!.lineTo(x, y + tileSize);
+  context!.stroke();
+  
+}
+let drawSquer = (x: number, y: number)=>{
+  context!.strokeRect(x*tileSize, y*tileSize, tileSize, tileSize)
+}
+let clearElement = (x: number, y: number)=>{
+  context!.clearRect(x*tileSize, y*tileSize, tileSize, tileSize)
+}
 
-    context!.moveTo(x + tileSize, y);
-    context!.lineTo(x, y + tileSize);
-    context!.stroke();
+let drawFillSquer = (x: number, y: number)=>{
+  context!.fillRect(x*tileSize, y*tileSize, tileSize, tileSize)
+}
+
+let drawWarShips = (ships: any[])=>{
+  
+  
+  for(let i = 0; i<ships.length; i++){
+   drawSingleShip(i)
     
   }
-  let drawSquer = (x: number, y: number)=>{
-    context!.strokeRect(x * tileSize, y *tileSize, tileSize, tileSize)
-  }
-  let clearElement = (x: number, y: number, width: number, height: number)=>{
-    context!.clearRect(x*tileSize, y*tileSize, width*tileSize, height*tileSize)
-  }
+}
 
-  let drawWarships = (warShips: any[]) => {
-    for(let i=0; i<warShips.length; i++){
-      if(warShips[i].orientation === Orientation.VERTICAL){
-        fillSquer(warShips[i].x, warShips[i].y, 1, warShips[i].shipLength)
-        
-        addShipBoard(warShips[i], i)
-
-        // for(let x=warShips[i].x; x<warShips[i].x+1; x++){
-        //   // console.log("for1");
-          
-        //   for(let y=warShips[i].y; y<warShips[i].y+warShips[i].shipLength; y++){
-        //     shipsOnBoard[x][y] = {shipIndex: i, busy: true}
-        //     // console.log("for2");
-            
-        //   }
-        // }
-        
-      }
-      if(warShips[i].orientation === Orientation.HORIZONTAL){
-        fillSquer(warShips[i].x, warShips[i].y, warShips[i].shipLength, 1)
-        addShipBoard(warShips[i], i)
-      }
-    }
-  }
-
-  let fillSquer = (x: number, y: number, width: number, height: number) =>{
-    context?.fillRect(x*tileSize, y*tileSize, width*tileSize, height*tileSize)
-  }
-  let addShipBoard = (ship: any, index: number)=>{
-    warShips[index] = ship
+let drawSingleShip = (shipId: number) =>{
+  let ship = warShips[shipId]
+  for(let l = 0; l<ship.shipLength; l++){
     if(ship.orientation === Orientation.VERTICAL){
-      for(let x=ship.x; x<ship.x+1; x++){
-        // console.log("for1");
-        
-        for(let y=ship.y; y<ship.y+ship.shipLength; y++){
-          shipsOnBoard[x][y] = {shipIndex: index, busy: true}
-          // console.log("for2");
-          
-        }
-      }
-    }else{
-      for(let x=ship.x; x<ship.x+ship.shipLength; x++){
-        // console.log("for1");
-        
-        for(let y=ship.y; y<ship.y+1; y++){
-          shipsOnBoard[x][y] = {shipIndex: index, busy: true}
-          // console.log("for2");
-          
-        }
-      }
+      drawFillSquer(ship.x, (ship.y+l))
+      shipsOnBoard[ship.x][(ship.y+l)].push(shipId)
     }
-    
-  }
 
-  let removeShipBoard = (ship: any)=>{
+    if(ship.orientation === Orientation.HORIZONTAL){
+      drawFillSquer((ship.x+l), ship.y)
+      shipsOnBoard[(ship.x+l)][ship.y].push(shipId)
+    }
+  }
+}
+let clearShip = (shipId: number)=>{
+  
+  let ship = warShips[shipId]
+  for(let l = 0; l<ship.shipLength; l++){
     if(ship.orientation === Orientation.VERTICAL){
-      for(let x=ship.x; x<ship.x+1; x++){
-        // console.log("for1");
-        
-        for(let y=ship.y; y<ship.y+ship.shipLength; y++){
-          shipsOnBoard[x][y] = {}
-          // console.log("for2");
-          
-        }
-      }
-      clearElement(ship.x, ship.y, 1, ship.shipLength)
-      for(let y = ship.y; y<ship.y+ship.shipLength; y++){
-        drawSquer(ship.x, y)
-      }
-    }else{
-      for(let x=ship.x; x<ship.x+ship.shipLength; x++){
-        // console.log("for1");
-        
-        for(let y=ship.y; y<ship.y+1; y++){
-          shipsOnBoard[x][y] = {}
-          // console.log("for2");
-          
-        }
-      }
-      clearElement(ship.x, ship.y, ship.shipLength, 1)
-      for(let x = ship.x; x<ship.x+ship.shipLength; x++){
-        drawSquer(x, ship.y)
+      shipsOnBoard[ship.x][(ship.y+l)].pop()
+      clearElement(ship.x,(ship.y+l))
+      drawSquer(ship.x,(ship.y+l))
+      if(shipsOnBoard[ship.x][(ship.y+l)].length !== 0){
+        drawFillSquer(ship.x, (ship.y+l))
       }
     }
-    
-    
+
+    if(ship.orientation === Orientation.HORIZONTAL){
+      shipsOnBoard[(ship.x+l)][ship.y].pop()
+      clearElement((ship.x+l),ship.y)
+      drawSquer((ship.x+l),ship.y)
+      if(shipsOnBoard[(ship.x+l)][ship.y].length !== 0){
+        drawFillSquer((ship.x+l), ship.y)
+      }
+    }
   }
+}
 
   return (
     <div className="boardComponent">
