@@ -1,6 +1,6 @@
 enum Orientation {
-    HORIZONTAL,
-    VERTICAL
-  }
+  HORIZONTAL,
+  VERTICAL
+}
 
-export default Orientation
+export default Orientation;
