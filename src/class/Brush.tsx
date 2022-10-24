@@ -1,6 +1,8 @@
 import React from "react";
+import Orientation from "../entities/Orientation";
 import Position from "../entities/Position";
 import Field from "./Field";
+import Warship from "./Warship";
 
 class Brush {
     private context: CanvasRenderingContext2D;
@@ -42,6 +44,7 @@ class Brush {
                 this.context.strokeRect(x, y, Brush.FIELD_SIZE, Brush.FIELD_SIZE);
             }
         }
+        return this
     }
 
     public drawCircle = (field: Field): Brush => {
@@ -64,6 +67,19 @@ class Brush {
         this.context.clearRect(x, y, Brush.FIELD_SIZE / 2, Brush.FIELD_SIZE / 2);
 
         return this;
+    }
+
+    public drawShip = (warship: Warship) => {
+        for (let i = 0; i < warship.length; i++) {
+            let { position: { x, y } } = warship;
+            if (warship.orientation === Orientation.HORIZONTAL) {
+                x += i
+            } else {
+                y += i
+            }
+
+            this.drawX(new Field(x, y), false)
+        }
     }
 }
 

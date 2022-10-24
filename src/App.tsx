@@ -1,10 +1,13 @@
-import Board from './components/Board';
+import AllyBoard from './components/AllyBoard';
+import EnemyBoard from './components/EnemyBoard';
 
 function App() {
   return (
     <>
-      <Board />
+      <EnemyBoard />
+      <AllyBoard />
     </>
+
   );
 }
 
