@@ -1,23 +1,16 @@
-import moment from 'moment';
-import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
-import Select from './components/Select';
-import Table from './components/Table';
+import Leaderboard from './pages/Leaderboard';
+
 
 function App() {
-  const [lastSeen, setLastSeen] = useState(moment().subtract(1, 'days').toDate().getTime())
 
   return (
-    <div className="App">
-      {/* http://localhost:3000 */}
-      {/* strona gry */}
-      
-      {/* http://localhost:3000/leaderboard */}
-      {/* cos co zawiera to nizej */}
-      <Select setLastSeen = {setLastSeen}></Select>
-      <Table lastSeen = {lastSeen}></Table>
-    </div>
-    
+    <Router>
+      <Routes>
+        <Route path="/leaderboard" element={<Leaderboard/>}/>
+      </Routes>
+    </Router>
   );
 }
 
