@@ -79,8 +79,40 @@ class Brush {
             }
 
             this.drawX(new Field(x, y), false)
+            // this.fillShip(new Field(x, y))
         }
+    }
+
+    public fillShip = (field: Field)=>{
+        const { x, y }: Position = field.toPosition();
+        this.context.fillRect(x, y, Brush.FIELD_SIZE, Brush.FIELD_SIZE)
+    }
+
+    public clearBoard = () => {
+        this.context.clearRect(0, 0, Brush.BOARD_SIZE, Brush.BOARD_SIZE)
+        this.drawGrid()
+    }
+
+    public drawMoveShip = (x: number, y: number, warship: Warship) => {
+        
+
+
+        this.context.strokeStyle = "green"
+        this.context.lineWidth = 5;
+        let x1 = 0, y1 = x1
+        if (warship.orientation === Orientation.HORIZONTAL) {
+            x1 += (warship.length*Brush.FIELD_SIZE)
+            y1 = Brush.FIELD_SIZE
+        } else {
+            y1 += (warship.length*Brush.FIELD_SIZE)
+            x1 = Brush.FIELD_SIZE
+        }
+
+
+        this.context.strokeRect(x, y, x1, y1);
+        this.context.strokeStyle = "black"
+        this.context.lineWidth = 1
     }
 }
 
-export default Brush;
+export default Brush
