@@ -149,22 +149,22 @@ const chechShipOnAnother = (ship: Warship)=>{
 
             
             for (let i = 0; i < ship.length; i++) {
-                let tmpX = ship.position.x;
-                let tmpY = ship.position.y;
+                let temporaryShipX = ship.position.x;
+                let temporaryShipY = ship.position.y;
                 switch (ship.orientation) {
                     case Orientation.HORIZONTAL:
-                        tmpX += i;
+                        temporaryShipX += i;
     
                         break;
     
                     case Orientation.VERTICAL:
-                        tmpY += i;
+                        temporaryShipY += i;
                         break;
     
     
                 }
                 
-                if((tmpX>= initialx && tmpX <= x) && (tmpY  >= initialy && tmpY  <= y )){
+                if((temporaryShipX>= initialx && temporaryShipX <= x) && (temporaryShipY  >= initialy && temporaryShipY  <= y )){
                     ship.position = initialField;
                 }
             }
