@@ -15,8 +15,13 @@ const Table = (props: any) => {
     const [players, setPlayers] = useState<Player[]>([]);
     const getPlayersAPI = async () => {
 
+        let url = "http://localhost:4000/players";
+        if (props.lastSeen) {
+            let timestamp = moment().subtract(1, 'days').toDate().getTime();
+            url += `?lastSeen_gte=${timestamp}`;
+        }
 
-        fetch(`http://localhost:4000/players?lastSeen_gte=${props.lastSeen}`, {
+        fetch(url, {
             method: 'GET',
             headers: new Headers({
                 'Accept': 'application/json',
