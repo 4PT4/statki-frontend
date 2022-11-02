@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import Brush from "../class/Brush";
 import Field from "../class/Field";
 import Warship from "../class/Warship";
@@ -135,7 +134,7 @@ const offsetCalculator = (warship: Warship, field: Field) =>{
 
 const chechShipOnAnother = (ship: Warship)=>{
     warships.forEach(warship =>{
-        if(warship !=ship){
+        if(warship !==ship){
             let {x, y} = warship.position
             const initialx = x-1
             const initialy = y-1
