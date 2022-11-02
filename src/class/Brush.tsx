@@ -44,7 +44,7 @@ class Brush {
                 this.context.strokeRect(x, y, Brush.FIELD_SIZE, Brush.FIELD_SIZE);
             }
         }
-        return this
+        return this;
     }
 
     public drawCircle = (field: Field): Brush => {
@@ -73,24 +73,28 @@ class Brush {
         for (let i = 0; i < warship.length; i++) {
             let { position: { x, y } } = warship;
             if (warship.orientation === Orientation.HORIZONTAL) {
-                x += i
+                x += i;
             } else {
-                y += i
+                y += i;
             }
 
-            this.drawX(new Field(x, y), false)
-            // this.fillShip(new Field(x, y))
+            // this.drawX(new Field(x, y), false)
+            this.fillShip(new Field(x, y));
         }
     }
 
     public fillShip = (field: Field)=>{
         const { x, y }: Position = field.toPosition();
-        this.context.fillRect(x, y, Brush.FIELD_SIZE, Brush.FIELD_SIZE)
+        this.context.fillRect(x, y, Brush.FIELD_SIZE, Brush.FIELD_SIZE);
     }
 
-    public clearBoard = (warships: Warship[]) => {
-        this.context.clearRect(0, 0, Brush.BOARD_SIZE, Brush.BOARD_SIZE)
-        this.drawGrid()
+    public clearBoard = () => {
+        this.context.clearRect(0, 0, Brush.BOARD_SIZE, Brush.BOARD_SIZE);
+        this.drawGrid();
+        
+    }
+
+    public drawWarships = (warships: Warship[])=>{
         warships.forEach(warship => {  
             this.drawShip(warship);
         });
@@ -100,22 +104,22 @@ class Brush {
         
 
 
-        this.context.strokeStyle = "green"
+        this.context.strokeStyle = "green";
         this.context.lineWidth = 5;
         let x1 = 0, y1 = x1
         if (warship.orientation === Orientation.HORIZONTAL) {
-            x1 += (warship.length*Brush.FIELD_SIZE)
-            y1 = Brush.FIELD_SIZE
+            x1 += (warship.length*Brush.FIELD_SIZE);
+            y1 = Brush.FIELD_SIZE;
         } else {
-            y1 += (warship.length*Brush.FIELD_SIZE)
-            x1 = Brush.FIELD_SIZE
+            y1 += (warship.length*Brush.FIELD_SIZE);
+            x1 = Brush.FIELD_SIZE;
         }
 
 
         this.context.strokeRect(x, y, x1, y1);
-        this.context.strokeStyle = "black"
-        this.context.lineWidth = 1
+        this.context.strokeStyle = "black";
+        this.context.lineWidth = 1;
     }
 }
 
-export default Brush
+export default Brush;

@@ -34,7 +34,7 @@ const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
 };
 
 const drawBoard = (context: CanvasRenderingContext2D | null)=>{
-    new Brush(context).drawGrid()
+    new Brush(context).drawGrid();
 }
 
 function EnemyBoard(){
