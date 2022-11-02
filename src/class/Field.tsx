@@ -15,11 +15,9 @@ class Field {
     }
 
     public static fromEvent(e: React.MouseEvent<HTMLCanvasElement>) {
-        const offsetX: number = e.currentTarget.offsetLeft;
-        const offsetY: number = e.currentTarget.offsetTop;
-
-        const mouseX = Math.floor((e.clientX - offsetX) / Brush.FIELD_SIZE);
-        const mouseY = Math.floor((e.clientY - offsetY) / Brush.FIELD_SIZE);
+        const rect = e.currentTarget.getBoundingClientRect();
+        const mouseX = Math.floor((e.clientX - rect.left) / Brush.FIELD_SIZE);
+        const mouseY = Math.floor((e.clientY - rect.top) / Brush.FIELD_SIZE);
         
         return new Field(mouseX, mouseY);
     }

@@ -88,9 +88,12 @@ class Brush {
         this.context.fillRect(x, y, Brush.FIELD_SIZE, Brush.FIELD_SIZE)
     }
 
-    public clearBoard = () => {
+    public clearBoard = (warships: Warship[]) => {
         this.context.clearRect(0, 0, Brush.BOARD_SIZE, Brush.BOARD_SIZE)
         this.drawGrid()
+        warships.forEach(warship => {  
+            this.drawShip(warship);
+        });
     }
 
     public drawMoveShip = (x: number, y: number, warship: Warship) => {
