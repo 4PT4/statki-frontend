@@ -20,7 +20,7 @@ const mouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const mouseX = Math.floor(e.clientX - rect.left);
     const mouseY = Math.floor(e.clientY - rect.top);
 
-    if(mouseX > 400 || mouseY > 400){
+    if (mouseX > 400 || mouseY > 400) {
         mouseUp(e);
     }
 
@@ -54,27 +54,25 @@ const mouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     previousField = field;
 }
 
-const findShip = (field: Field) => {
+const findShip = (field: Field, offset: number, ship: Warship | null) => {
     const warship = warships.find((warship) => {
-        for (let i = 0; i < warship.length; i++) {
-            let { x, y } = warship.position;
+        let { x, y } = warship.position;
+        const initialx = x + offset;
+        const initialy = y + offset;
+        let endx = -1, endy = -1;
+        if (warship.orientation === Orientation.HORIZONTAL) {
+            endx = x + warship.length;
+            endy = y + 1;
+        } else if (warship.orientation === Orientation.VERTICAL) {
+            endx = x + 1;
+            endy = y + warship.length;
+        }
 
-            switch (warship.orientation) {
-                case Orientation.HORIZONTAL:
-                    x += i;
-
-                    break;
-
-                case Orientation.VERTICAL:
-                    y += i;
-                    break;
-
-
+        if ((field.x >= initialx && field.x <= endx) && (field.y >= initialy && field.y <= endy)) {
+            if(warship === ship){
+                return false;
             }
-            let shipField = new Field(x, y);
-            if (shipField.equals(field)) {
-                return true;
-            }
+            return true;
         }
 
     })
@@ -89,7 +87,7 @@ const mouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const mouseX = Math.floor(e.clientX - rect.left);
     const mouseY = Math.floor(e.clientY - rect.top);
     const field = Field.fromEvent(e);
-    const warship = findShip(field);
+    const warship = findShip(field, 0, null);
     // const warship = warships.find(w => w.position.equals(field));
     if (warship) {
         if (warship.orientation === Orientation.HORIZONTAL) {
@@ -118,13 +116,13 @@ const checkShipOnBoard = (ship: Warship) => {
 
 
     }
-    if (position + ship.length - 1 >= Brush.FIELD_COUNT || position <0) {
+    if (position + ship.length - 1 >= Brush.FIELD_COUNT || position < 0) {
         ship.position = initialField;
     }
 
 }
 
-const offsetCalculator = (warship: Warship, field: Field) =>{
+const offsetCalculator = (warship: Warship, field: Field) => {
     if (warship.orientation === Orientation.HORIZONTAL) {
         field.x = field.x + offset;
     } else if (warship.orientation === Orientation.VERTICAL) {
@@ -133,48 +131,6 @@ const offsetCalculator = (warship: Warship, field: Field) =>{
     return field;
 }
 
-const chechShipOnAnother = (ship: Warship)=>{
-    warships.forEach(warship =>{
-        if(warship !==ship){
-            let {x, y} = warship.position;
-            const initialx = x-1;
-            const initialy = y-1;
-            if (warship.orientation === Orientation.HORIZONTAL) {
-                x = x+warship.length;
-                y = y+1;
-            } else if (warship.orientation === Orientation.VERTICAL) {
-                x = x+1;
-                y = y+warship.length;
-            }
-
-            
-            for (let i = 0; i < ship.length; i++) {
-                let temporaryShipX = ship.position.x;
-                let temporaryShipY = ship.position.y;
-                switch (ship.orientation) {
-                    case Orientation.HORIZONTAL:
-                        temporaryShipX += i;
-    
-                        break;
-    
-                    case Orientation.VERTICAL:
-                        temporaryShipY += i;
-                        break;
-    
-    
-                }
-                
-                if((temporaryShipX>= initialx && temporaryShipX <= x) && (temporaryShipY  >= initialy && temporaryShipY  <= y )){
-                    ship.position = initialField;
-                }
-            }
-            
-            
-            
-        }
-        
-    })
-}
 
 const mouseUp = (e: React.MouseEvent<HTMLCanvasElement>) => {
     e.preventDefault();
@@ -188,14 +144,34 @@ const mouseUp = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!dragging)
         return;
 
-    
+
     field = offsetCalculator(dragging, field);
     dragging.position = field;
-    
+
 
 
     checkShipOnBoard(dragging);
-    chechShipOnAnother(dragging);
+    for (let i = 0; i < dragging.length; i++) {
+        let temporaryShipX = dragging.position.x;
+        let temporaryShipY = dragging.position.y;
+        switch (dragging.orientation) {
+            case Orientation.HORIZONTAL:
+                temporaryShipX += i;
+
+                break;
+
+            case Orientation.VERTICAL:
+                temporaryShipY += i;
+                break;
+
+
+        }
+        let field = new Field(temporaryShipX, temporaryShipY)
+        const warship = findShip(field, -1, dragging)
+        if(warship){
+            dragging.position = initialField;
+        }
+    }
     brush.clearBoard();
     brush.drawWarships(warships);
     brush.drawShip(dragging);
