@@ -61,11 +61,11 @@ const findShip = (field: Field, offset: number, ship: Warship | null) => {
         const initialy = y + offset;
         let endx = -1, endy = -1;
         if (warship.orientation === Orientation.HORIZONTAL) {
-            endx = x + warship.length;
-            endy = y + 1;
+            endx = x + warship.length -1 - offset;
+            endy = y - offset;
         } else if (warship.orientation === Orientation.VERTICAL) {
-            endx = x + 1;
-            endy = y + warship.length;
+            endx = x - offset;
+            endy = y + warship.length -1 - offset;
         }
 
         if ((field.x >= initialx && field.x <= endx) && (field.y >= initialy && field.y <= endy)) {
