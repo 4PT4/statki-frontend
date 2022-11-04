@@ -12,20 +12,9 @@ const Table = (props:{isFiltered:boolean}) => {
             url += `?seen_after=${timestamp}`;
         }
 
-        fetch(url, {
-            method: 'GET',
-            headers: new Headers({
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            })
-        }).then(response => response.json())
-            .then(data => {
-                setPlayers(data);
-            }).catch(error => {
-                // console.error(error);
-
-            });
-
+        const res = await fetch(url, {method: 'GET'});
+        const data =  await res.json();
+        setPlayers(data);
     }
 
     useEffect(() => {

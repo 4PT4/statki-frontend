@@ -1,11 +1,19 @@
-
+body {
+    margin: 100px;
+}
+input, label {
+    display: inline-block;
+    
+}
 table {
     width: 100%;
 }
-
-
-
-
 table,tr, th, td {
     border: 1px solid;
+  }
+  td {
+    text-align: center;
+  }
+  th {
+    background-color: rgb(71, 170, 68);
   }
