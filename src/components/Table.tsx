@@ -48,3 +48,4 @@ const Table = (props:{isFiltered:boolean}) => {
         </table>
     </>;
 };
+export default Table;

@@ -1,13 +1,14 @@
 import { useState } from 'react';
 
 function LoginForm() {
-    const [Login, setLogin] = useState("")
-    const [Password, setPassword] = useState("")
+    const [login, setLogin] = useState("")
+    const [password, setPassword] = useState("")
 
     const handleSubmit = (event: any) => {
         event.preventDefault();
-        alert(`Witaj z powrotem ${Login}!`)
-        console.log({Login,Password})
+        fetch("https://localhost:5000/auth/login",{method:"post",body:JSON.stringify({login,password})})
+        //jesli sie udalo przejdz do strony gry, jesli nie "nie udalo sie zalogowac"
+        // console.log({login,password})
     }
 
     return (
@@ -20,7 +21,7 @@ function LoginForm() {
                         <input
                             type="text"
                             className="form-control mt-1"
-                            value={Login}
+                            value={login}
                             placeholder="wprowadz login"
                             onChange={(e) => setLogin(e.target.value)}
                         />
@@ -30,7 +31,7 @@ function LoginForm() {
                         <input
                             type="password"
                             className="form-control mt-1"
-                            value={Password}
+                            value={password}
                             placeholder="wprowadz hasło"
                             onChange={(e) => setPassword(e.target.value)}
                         />
