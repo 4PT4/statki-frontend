@@ -3,11 +3,10 @@ import Leaderboard from './pages/Leaderboard';
 
 
 function App() {
-
   return (
     <Router>
       <Routes>
-        <Route path="/leaderboard" element={<Leaderboard/>}/>
+        <Route path="/leaderboard" element={<Leaderboard />} />
       </Routes>
     </Router>
   );
