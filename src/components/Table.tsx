@@ -1,82 +1,50 @@
 import { useEffect, useState } from "react";
 import moment from 'moment';
+import Player from "../entities/Player";
 
-
-interface Player {
-    id: string
-    username: string
-    wins: number
-    loses: number
-    winStreak: number
-    lastSeen: number
-}
-
-const Table = (props: any) => {
+const Table = (props: { isFiltered: boolean }) => {
     const [players, setPlayers] = useState<Player[]>([]);
-    const getPlayersAPI = async () => {
 
-        let url = "http://localhost:4000/players";
-        if (props.lastSeen) {
-            let timestamp = moment().subtract(1, 'days').toDate().getTime();
-            url += `?lastSeen_gte=${timestamp}`;
+    const fetchPlayers = async () => {
+        const url = new URL("http://localhost:8000/players");
+        if (props.isFiltered) {
+            const previousDay = moment().subtract(1, 'days').toDate().getTime();
+            url.searchParams.append('seen_after', previousDay.toString());
         }
 
-        fetch(url, {
-            method: 'GET',
-            headers: new Headers({
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            })
-        }).then(response => response.json())
-            .then(data => {
-                setPlayers(data);
-            }).catch(error => {
-                console.error(error);
-
-            });
-
+        const res = await fetch(url, { method: 'GET' });
+        const data = await res.json();
+        setPlayers(data);
     }
 
     useEffect(() => {
-        getPlayersAPI();
-    });
+        fetchPlayers();
+    }, [props.isFiltered]);
 
-
-    return <>
+    return (
         <table>
             <thead>
                 <tr>
-                    <th>
-                        Name
-                    </th>
-                    <th>
-                        WinS
-                    </th>
-                    <th>
-                        Loses
-                    </th>
-                    <th>
-                        Win Streak
-                    </th>
-                    <th>
-                        Last Seen
-                    </th>
+                    <th>Name</th>
+                    <th>Wins</th>
+                    <th>Loses</th>
+                    <th>Win streak</th>
+                    <th>Last seen</th>
                 </tr>
             </thead>
             <tbody>
-                {players.map(player => {
-                    return (<tr>
-                        <td>{player.username}</td>
+                {players.map(player => (
+                    <tr>
+                        <td>{player.nickname}</td>
                         <td>{player.wins}</td>
                         <td>{player.loses}</td>
                         <td>{player.winStreak}</td>
                         <td>{(moment(player.lastSeen)).startOf('day').fromNow()}</td>
-                    </tr>)
-                })}
+                    </tr>
+                ))}
             </tbody>
-
         </table>
-    </>;
+    );
 };
 
 export default Table;
