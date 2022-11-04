@@ -1,11 +1,17 @@
-import Board from './components/Board';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Leaderboard from './pages/Leaderboard';
+
 
 function App() {
+
   return (
-    <>
-      <Board />
-    </>
+    <Router>
+      <Routes>
+        <Route path="/leaderboard" element={<Leaderboard/>}/>
+      </Routes>
+    </Router>
   );
 }
+
 
 export default App;
