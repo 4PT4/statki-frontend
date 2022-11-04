@@ -1,24 +1,15 @@
 import { useEffect, useState } from "react";
 import moment from 'moment';
+import Player from "../entities/Player";
 
-
-interface Player {
-    id: string
-    username: string
-    wins: number
-    loses: number
-    winStreak: number
-    lastSeen: number
-}
-
-const Table = (props: any) => {
+const Table = (props:{isFiltered:boolean}) => {
     const [players, setPlayers] = useState<Player[]>([]);
     const getPlayersAPI = async () => {
 
-        let url = "http://localhost:4000/players";
-        if (props.lastSeen) {
+        let url = "http://localhost:8000/players";
+        if (props.isFiltered) {
             let timestamp = moment().subtract(1, 'days').toDate().getTime();
-            url += `?lastSeen_gte=${timestamp}`;
+            url += `?seen_after=${timestamp}`;
         }
 
         fetch(url, {
@@ -31,7 +22,7 @@ const Table = (props: any) => {
             .then(data => {
                 setPlayers(data);
             }).catch(error => {
-                console.error(error);
+                // console.error(error);
 
             });
 
@@ -39,34 +30,24 @@ const Table = (props: any) => {
 
     useEffect(() => {
         getPlayersAPI();
-    });
+    }, [props.isFiltered]);
 
 
     return <>
         <table>
             <thead>
                 <tr>
-                    <th>
-                        Name
-                    </th>
-                    <th>
-                        WinS
-                    </th>
-                    <th>
-                        Loses
-                    </th>
-                    <th>
-                        Win Streak
-                    </th>
-                    <th>
-                        Last Seen
-                    </th>
+                    <th>Name</th>
+                    <th>Wins</th>
+                    <th>Loses</th>
+                    <th>Win streak</th>
+                    <th>Last Seen</th>
                 </tr>
             </thead>
             <tbody>
                 {players.map(player => {
-                    return (<tr>
-                        <td>{player.username}</td>
+                    return (<tr key={player.id}> 
+                        <td>{player.nickname}</td>
                         <td>{player.wins}</td>
                         <td>{player.loses}</td>
                         <td>{player.winStreak}</td>
