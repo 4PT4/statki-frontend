@@ -1,19 +1,40 @@
 body {
     margin: 100px;
 }
-input, label {
+
+input,
+label {
     display: inline-block;
-    
+
 }
+
 table {
     width: 100%;
 }
-table,tr, th, td {
+
+table,
+tr,
+th,
+td {
     border: 1px solid;
-  }
-  td {
+}
+
+td {
     text-align: center;
-  }
-  th {
+}
+
+th {
     background-color: rgb(71, 170, 68);
-  }
+}
+
+tr:first-of-type {
+    background-color: goldenrod;
+}
+
+tr:nth-of-type(2) {
+    background-color: silver;
+}
+
+tr:nth-of-type(3) {
+    background-color: rgba(175, 76, 10, 0.884);
+}

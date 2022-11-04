@@ -13,6 +13,7 @@ const Leaderboard = () => {
                 onChange={(e) => setIsFiltered(e.target.checked)} />
             <label htmlFor="filter">Last 24h</label>
             <Table isFiltered={isFiltered}/>
+           
         </>)
 };
 
