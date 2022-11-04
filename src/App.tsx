@@ -5,7 +5,6 @@ import Home from './pages/Home';
 
 
 function App() {
-
   return (
     <Router>
       <Routes>
@@ -18,6 +17,5 @@ function App() {
 
   );
 }
-
 
 export default App;

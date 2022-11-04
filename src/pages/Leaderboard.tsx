@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Table from '../components/Table';
+import './Leaderboard.css';
 
 const Leaderboard = () => {
     const [isFiltered, setIsFiltered] = useState(false);
@@ -11,7 +12,8 @@ const Leaderboard = () => {
                 checked={isFiltered}
                 onChange={(e) => setIsFiltered(e.target.checked)} />
             <label htmlFor="filter">Last 24h</label>
-            <Table lastSeen={isFiltered}></Table>
+            <Table isFiltered={isFiltered}/>
+           
         </>)
 };
 
