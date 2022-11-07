@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import LoginForm from '../components/LoginForm/LoginForm';
-import './Home.css';
+import "./Home.css"
+
 
 const Home = () => {
     return (
         <>
 <LoginForm/>
 <Link to={"/leaderboard"}>
-        Leaderboard
+<img className='forms sign-in' src={"./images/leaderboard.png"} />
 </Link>
         </>)
 };

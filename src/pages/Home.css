@@ -1,3 +1,26 @@
-body{
-  background-image: url("/public/background.jpg");
+/* body{
+  background-image: url("background.jpg");
+  background-size: cover;
+  box-sizing: border-box;
+} */
+
+.forms {
+  padding: 1rem;
+  background-color: var(--);
+  border-radius: 1.5rem;
+  width: 20%;
+  box-shadow: rgba(1, 1, 0, .35) 0px 5px 15px;
+  transform: scale(0.3);
+  transition: 1.5s ease-in-out;
+  transition-delay: 0s;
+}
+
+
+.container.sign-in .form.sign-in,
+.container.sign-in .social-list.sign-in,
+.container.sign-in .social-list.sign-in>div,
+.container.sign-up .form.sign-up,
+.container.sign-up .social-list.sign-up,
+.container.sign-up .social-list.sign-up>div {
+  transform: scale(1);
 }
