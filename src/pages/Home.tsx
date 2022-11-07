@@ -1,27 +1,24 @@
-import { useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { Link } from 'react-router-dom';
 import "./Home.css"
-// import leaderboardlogo from './leaderboard.png';
-import leaderboardIcon from '../images/leaderboard-icon.png'
-
-
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrophy, faSignIn } from '@fortawesome/free-solid-svg-icons';
 
 const Home = () => {
         const [login, setLogin] = useState("")
         const [password, setPassword] = useState("")
 
-        const handleSubmit = (event: any) => {
-                event.preventDefault();
+        const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+                e.preventDefault();
 
                 fetch("https://localhost:5000/auth/login", { method: "post", body: JSON.stringify({ login, password }) })
                 //jesli sie udalo przejdz do strony gry, jesli nie "nie udalo sie zalogowac"
                 console.log({ login, password })
-        }
-        return (
-                <>
-                        <form onSubmit={handleSubmit}>
+        };
 
+        return (
+                <div className="home">
+                        <form onSubmit={handleSubmit}>
                                 <input
                                         type="text"
                                         value={login}
@@ -35,17 +32,15 @@ const Home = () => {
                                         onChange={(e) => setPassword(e.target.value)}
                                 />
                                 <button type="submit">
-                                        Login
+                                        <FontAwesomeIcon icon={faSignIn} /> Login
                                 </button>
-
                                 <Link to="/leaderboard">
-                                        <img src={leaderboardIcon} alt="fireSpot" />
+                                        <FontAwesomeIcon icon={faTrophy} />
                                         Leaderboard
                                 </Link>
-
                         </form>
-
-                </>)
+                </div>
+        );
 };
 
 export default Home;

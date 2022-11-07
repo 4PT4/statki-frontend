@@ -1,5 +1,7 @@
-body{
-    background-image: url("./images/background.jpg");
-    background-size: cover;
-    box-sizing: border-box;
-  }
+html {
+  background-position: center;
+  background-image: url("./images/background.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  height: 100vh;
+}
