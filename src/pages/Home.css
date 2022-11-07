@@ -1,26 +1,50 @@
-/* body{
-  background-image: url("background.jpg");
-  background-size: cover;
-  box-sizing: border-box;
-} */
+input{
+  background-color: white;
+  border: 0;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+}
 
-.forms {
+form{
+  
+  background-color: rgba(90, 131, 145, 0.801);
+  display: flex;
+  flex-direction: column;
   padding: 1rem;
-  background-color: var(--);
-  border-radius: 1.5rem;
+  border-radius: 0.75rem;
+  gap: 0.5rem;
   width: 20%;
-  box-shadow: rgba(1, 1, 0, .35) 0px 5px 15px;
-  transform: scale(0.3);
-  transition: 1.5s ease-in-out;
-  transition-delay: 0s;
+    box-shadow: rgba(1, 1, 0, .35) 0px 5px 15px;
+
 }
 
-
-.container.sign-in .form.sign-in,
-.container.sign-in .social-list.sign-in,
-.container.sign-in .social-list.sign-in>div,
-.container.sign-up .form.sign-up,
-.container.sign-up .social-list.sign-up,
-.container.sign-up .social-list.sign-up>div {
-  transform: scale(1);
+button{
+  font-weight: bold;
+  color: white;
+  background-color: rgb(191, 118, 40);
+  border: 0;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
 }
+
+button:hover{
+  cursor: pointer;
+  background-color: rgb(102, 62, 20); ;
+}
+
+img{
+  width: 3rem;
+}
+a{
+display: flex;
+align-items: center;
+color: white;
+text-decoration: none;
+align-self: flex-start;
+
+}
+
+a:hover{
+  text-decoration: underline;
+}
+
