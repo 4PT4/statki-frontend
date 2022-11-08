@@ -17,29 +17,26 @@ const Home = () => {
         };
 
         return (
-                <div className="home">
-                        <form onSubmit={handleSubmit}>
-                                <input
-                                        type="text"
-                                        value={login}
-                                        placeholder="Login"
-                                        onChange={(e) => setLogin(e.target.value)}
-                                />
-                                <input
-                                        type="password"
-                                        value={password}
-                                        placeholder="Password"
-                                        onChange={(e) => setPassword(e.target.value)}
-                                />
-                                <button type="submit">
-                                        <FontAwesomeIcon icon={faSignIn} /> Login
-                                </button>
-                                <Link to="/leaderboard">
-                                        <FontAwesomeIcon icon={faTrophy} />
-                                        Leaderboard
-                                </Link>
-                        </form>
-                </div>
+                <form onSubmit={handleSubmit}>
+                        <input
+                                type="text"
+                                value={login}
+                                placeholder="Login"
+                                onChange={(e) => setLogin(e.target.value)}
+                        />
+                        <input
+                                type="password"
+                                value={password}
+                                placeholder="Password"
+                                onChange={(e) => setPassword(e.target.value)}
+                        />
+                        <button type="submit">
+                                <FontAwesomeIcon icon={faSignIn} /> Sign in
+                        </button>
+                        <Link to="/leaderboard">
+                                <FontAwesomeIcon icon={faTrophy} /> Leaderboard
+                        </Link>
+                </form>
         );
 };
 

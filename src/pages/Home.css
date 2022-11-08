@@ -1,20 +1,25 @@
 input {
-  background-color: white;
+  background-color: whitesmoke;
   border: 0;
   padding: 0.75rem 1.5rem;
-  border-radius: 0.75rem;
+  border-radius: 0.5rem;
+}
+
+input::placeholder {
+  font-style: italic;
 }
 
 form {
-  background-color: rgba(90, 131, 145, 0.801);
+  background-color: rgba(90, 131, 145, 0.65);
   display: flex;
   flex-direction: column;
   padding: 1rem;
-  border-radius: 0.75rem;
+  border-radius: 0.5rem;
   gap: 0.5rem;
   width: 20%;
   box-shadow: rgba(1, 1, 0, .35) 0px 5px 15px;
-  min-width: 200px
+  min-width: 300px;
+  margin: 4rem;
 }
 
 button {
@@ -23,12 +28,12 @@ button {
   background-color: rgb(191, 118, 40);
   border: 0;
   padding: 0.75rem;
-  border-radius: 0.75rem;
+  border-radius: 0.5rem;
 }
 
 button:hover {
   cursor: pointer;
-  background-color: rgb(102, 62, 20);
+  background-color: rgb(161, 103, 40);
 }
 
 img {
@@ -42,15 +47,10 @@ a {
   color: white;
   text-decoration: none;
   align-self: flex-end;
+  font-size: small;
 }
 
-a:hover {
+a:hover,
+a:focus {
   text-decoration: underline;
-}
-
-.home {
-  display: flex;
-  height: 100vh;
-  align-items: center;
-  justify-content: center;
 }
