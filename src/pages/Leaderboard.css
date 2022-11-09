@@ -1,40 +1,23 @@
-body {
-    margin: 100px;
-}
-
-input,
 label {
+    font-weight: bold;
+    color: white;
+    background-color: rgb(191, 118, 40);
+    padding: 0.5rem;
+    border-radius: 0.25rem;
     display: inline-block;
-
+    margin: 0.5rem 0;
+    font-size: small;
 }
 
-table {
-    width: 100%;
+label:hover {
+    cursor: pointer;
+    background-color: rgb(149, 95, 37);
 }
 
-table,
-tr,
-th,
-td {
-    border: 1px solid;
+input[type="checkbox"] {
+    display: none;
 }
 
-td {
-    text-align: center;
-}
-
-th {
-    background-color: rgb(71, 170, 68);
-}
-
-tr:first-of-type {
-    background-color: goldenrod;
-}
-
-tr:nth-of-type(2) {
-    background-color: silver;
-}
-
-tr:nth-of-type(3) {
-    background-color: rgba(175, 76, 10, 0.884);
+input:checked+label {
+    background-color: rgb(112, 69, 22);
 }
