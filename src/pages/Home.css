@@ -46,11 +46,21 @@ a {
   align-items: center;
   color: white;
   text-decoration: none;
-  align-self: flex-end;
-  font-size: small;
+
 }
 
 a:hover,
 a:focus {
   text-decoration: underline;
+}
+
+.errorMessage {
+  color: rgb(168, 40, 40);
+  font-weight: bold;
+}
+
+.formFooter {
+  display: flex;
+  justify-content: space-between;
+  font-size: small;
 }

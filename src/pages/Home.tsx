@@ -5,16 +5,30 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrophy, faSignIn } from '@fortawesome/free-solid-svg-icons';
 
 const Home = () => {
-        const [login, setLogin] = useState("")
-        const [password, setPassword] = useState("")
+        const [login, setLogin] = useState("");
+        const [password, setPassword] = useState("");
+        const [error, setError] = useState("");
 
-        const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+        const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
                 e.preventDefault();
+                const credentials = { login, password }
+                try {
 
-                fetch("https://localhost:5000/auth/login", { method: "post", body: JSON.stringify({ login, password }) })
-                //jesli sie udalo przejdz do strony gry, jesli nie "nie udalo sie zalogowac"
+                        await fetch("https://localhost:5000/auth/login", {
+                                method: "post",
+                                body: JSON.stringify(credentials)
+                        })
+
+                } catch (error) {
+                        setError('Server Error.')
+                }
+
+
+
                 console.log({ login, password })
         };
+
+
 
         return (
                 <form onSubmit={handleSubmit}>
@@ -33,9 +47,13 @@ const Home = () => {
                         <button type="submit">
                                 <FontAwesomeIcon icon={faSignIn} /> Sign in
                         </button>
-                        <Link to="/leaderboard">
-                                <FontAwesomeIcon icon={faTrophy} /> Leaderboard
-                        </Link>
+                        <div className='formFooter'>
+                                <span className='errorMessage'>{error}</span>
+                                <Link to="/leaderboard">
+                                        <FontAwesomeIcon icon={faTrophy} /> Leaderboard
+                                </Link>
+                        </div>
+
                 </form>
         );
 };
