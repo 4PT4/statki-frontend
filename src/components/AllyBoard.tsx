@@ -1,16 +1,17 @@
+import { useEffect, useState } from "react";
 import Brush from "../class/Brush";
 import Field from "../class/Field";
 import Warship from "../class/Warship";
 import Orientation from "../entities/Orientation";
 import Board from "./Board";
 
-const warships: Warship[] = [];
 let dragging: Warship | null;
 let previousField: Field = new Field(-1, -1);
 let initialField: Field;
 let diffX: number, diffY: number;
 let offset: number;
-
+const props = [new Warship(new Field(0, 0), 3, Orientation.VERTICAL), new Warship(new Field(5, 5), 3, Orientation.VERTICAL)]
+let warships: Warship[];
 const mouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     let field: Field = Field.fromEvent(e);
     const brush: Brush = Brush.fromEvent(e);
@@ -196,15 +197,17 @@ const drawBoard = (context: CanvasRenderingContext2D | null) => {
     brush.drawWarships(warships, null);
 
 }
-const ship = new Warship(new Field(0, 0), 3, Orientation.VERTICAL);
-const shi2 = new Warship(new Field(5, 5), 3, Orientation.HORIZONTAL);
-warships.push(ship);
-warships.push(shi2);
+
 
 
 const AllyBoard = () => {
+    const [getenWarships, setShip] = useState(props);
+    warships = getenWarships;
+    useEffect(() => {
 
-
+      });
+    console.log(warships);
+    
     return (<Board onMouseMove={mouseMove} onMouseDown={mouseDown} onMouseUp={mouseUp} drawBoard={drawBoard} />);
 }
 

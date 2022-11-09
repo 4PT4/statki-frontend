@@ -13,7 +13,7 @@ const handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
     return;
 
   brush
-    .clearElement(field)
+    .clearBoard()
     .drawX(field, true);
 
   hits.push(field);
@@ -27,7 +27,7 @@ const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     return;
 
   if (!previousField.wasHit(hits))
-    brush.clearElement(previousField);
+    brush.clearBoard();
 
   brush.drawCircle(field);
   previousField = field;
