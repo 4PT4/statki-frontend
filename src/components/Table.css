@@ -1,24 +1,21 @@
 table {
     width: 100%;
     border-collapse: collapse;
-
 }
 
 thead {
-    background-color: rgb(70, 106, 118);
+    background-color: rgb(46, 77, 87);
     color: white;
-
 }
 
 tbody {
-
     background-color: rgba(90, 131, 145, 0.65);
 }
 
 td,
 th,
 table {
-    border: 1px solid black;
+    border: 1px solid rgb(20, 56, 70);
 }
 
 td,
@@ -27,16 +24,14 @@ th {
 }
 
 tbody tr:first-of-type {
-    background-color: rgb(255, 215, 0, 0.75);
+    background-color: rgba(255, 217, 0, 0.589);
     font-weight: bold;
 }
 
 tbody tr:nth-of-type(2) {
-    background-color: rgba(192, 191, 191, 0.75);
-    font-weight: bold;
+    background-color: rgba(192, 191, 191, 0.568);
 }
 
 tbody tr:nth-of-type(3) {
-    background-color: rgba(152, 104, 31, 0.75);
-    font-weight: bold;
+    background-color: rgba(152, 104, 31, 0.637);
 }

@@ -9,7 +9,6 @@ label {
     font-size: small;
 }
 
-
 label:hover {
     cursor: pointer;
     background-color: rgb(149, 95, 37);

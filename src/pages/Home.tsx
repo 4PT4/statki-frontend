@@ -11,24 +11,18 @@ const Home = () => {
 
         const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
                 e.preventDefault();
-                const credentials = { login, password }
-                try {
 
+                const credentials = { login, password };
+                try {
                         await fetch("https://localhost:5000/auth/login", {
                                 method: "post",
                                 body: JSON.stringify(credentials)
-                        })
+                        });
 
                 } catch (error) {
-                        setError('Server Error.')
+                        setError('Network error.');
                 }
-
-
-
-                console.log({ login, password })
         };
-
-
 
         return (
                 <form onSubmit={handleSubmit}>
