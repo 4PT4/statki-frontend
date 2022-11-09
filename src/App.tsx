@@ -2,16 +2,13 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import './App.css';
 import Game from './pages/Game';
 import Leaderboard from './pages/Leaderboard';
-import Home from './pages/Home';
-
 
 
 function App() {
-
   return (
     <Router>
       <Routes>
-        <Route index element={<Home />} />
+        <Route index element={<Game />} />
         <Route path="leaderboard" element={<Leaderboard/>}/>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
