@@ -1,16 +1,17 @@
+import React, { useEffect, useState } from "react";
 import Brush from "../class/Brush";
 import Field from "../class/Field";
 import Warship from "../class/Warship";
 import Orientation from "../entities/Orientation";
 import Board from "./Board";
 
-const warships: Warship[] = [];
 let dragging: Warship | null;
 let previousField: Field = new Field(-1, -1);
 let initialField: Field;
 let diffX: number, diffY: number;
 let offset: number;
-
+const props = [new Warship(new Field(0, 0), 3, Orientation.VERTICAL), new Warship(new Field(5, 5), 3, Orientation.HORIZONTAL)]
+let warships: Warship[];
 const mouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     let field: Field = Field.fromEvent(e);
     const brush: Brush = Brush.fromEvent(e);
@@ -103,7 +104,7 @@ const mouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
         const { x, y } = warship.position.toPosition();
         diffX = mouseX - x;
         diffY = mouseY - y;
-        dragging = warship
+        dragging = warship;
         initialField = dragging.position;
     }
 }
@@ -166,6 +167,39 @@ const checkShipColision = (ship: Warship)=>{
     return false
 }
 
+const OriChange = (e: React.MouseEvent<HTMLCanvasElement>) =>{
+    e.preventDefault();
+    const brush: Brush = Brush.fromEvent(e);
+    const rect = e.currentTarget.getBoundingClientRect();
+    const mouseX = Math.floor(e.clientX - rect.left);
+    const mouseY = Math.floor(e.clientY - rect.top);
+    const mouseFieldX = Math.floor(mouseX / Brush.FIELD_SIZE);
+    const mouseFieldY = Math.floor(mouseY / Brush.FIELD_SIZE);
+    const warship = findShip(mouseFieldX, mouseFieldY, 0, null);
+
+    if (warship) {
+
+        switch (warship.orientation) {
+            case Orientation.HORIZONTAL:
+                warship.orientation=1;
+                if(!checkShipOnBoard(warship)){
+                    warship.orientation=0;
+                }
+                break;
+
+            case Orientation.VERTICAL:
+                warship.orientation=0;
+                if(!checkShipOnBoard(warship)){
+                    warship.orientation=1;
+                }
+                break;
+        }
+
+    }
+    brush.clearBoard();
+    brush.drawWarships(warships, null);
+}
+
 const mouseUp = (e: React.MouseEvent<HTMLCanvasElement>) => {
     e.preventDefault();
     let field = Field.fromEvent(e);
@@ -196,16 +230,18 @@ const drawBoard = (context: CanvasRenderingContext2D | null) => {
     brush.drawWarships(warships, null);
 
 }
-const ship = new Warship(new Field(0, 0), 3, Orientation.VERTICAL);
-const shi2 = new Warship(new Field(5, 5), 3, Orientation.HORIZONTAL);
-warships.push(ship);
-warships.push(shi2);
+
 
 
 const AllyBoard = () => {
+    const [getenWarships, setShip] = useState(props);
+    warships = getenWarships;
+    useEffect(() => {
 
-
-    return (<Board onMouseMove={mouseMove} onMouseDown={mouseDown} onMouseUp={mouseUp} drawBoard={drawBoard} />);
+      });
+    console.log(warships);
+    
+    return (<Board onMouseMove={mouseMove} onMouseDown={mouseDown} onMouseUp={mouseUp} onDoubleClick={OriChange} on drawBoard={drawBoard} />);
 }
 
 export default AllyBoard;
