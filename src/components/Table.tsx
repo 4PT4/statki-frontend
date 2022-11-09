@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import moment from 'moment';
 import Player from "../entities/Player";
+import './Table.css';
 
 const Table = (props: { isFiltered: boolean }) => {
     const [players, setPlayers] = useState<Player[]>([]);
@@ -46,5 +47,4 @@ const Table = (props: { isFiltered: boolean }) => {
         </table>
     );
 };
-
 export default Table;
