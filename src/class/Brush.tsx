@@ -1,6 +1,8 @@
 import React from "react";
+import Orientation from "../entities/Orientation";
 import Position from "../entities/Position";
 import Field from "./Field";
+import Warship from "./Warship";
 
 class Brush {
     private context: CanvasRenderingContext2D;
@@ -42,6 +44,7 @@ class Brush {
                 this.context.strokeRect(x, y, Brush.FIELD_SIZE, Brush.FIELD_SIZE);
             }
         }
+        return this;
     }
 
     public drawCircle = (field: Field): Brush => {
@@ -62,6 +65,66 @@ class Brush {
         });
 
         this.context.clearRect(x, y, Brush.FIELD_SIZE / 2, Brush.FIELD_SIZE / 2);
+
+        return this;
+    }
+
+    public drawShip = (warship: Warship) => {
+        for (let i = 0; i < warship.length; i++) {
+            let { position: { x, y } } = warship;
+            if (warship.orientation === Orientation.HORIZONTAL) {
+                x += i;
+            } else {
+                y += i;
+            }
+
+            this.fillShip(new Field(x, y));
+        }
+    }
+
+    public fillShip = (field: Field)=>{
+        const { x, y }: Position = field.toPosition();
+        this.context.fillRect(x, y, Brush.FIELD_SIZE, Brush.FIELD_SIZE);
+
+        return this;
+    }
+
+    public clearBoard = () => {
+        this.context.clearRect(0, 0, Brush.BOARD_SIZE, Brush.BOARD_SIZE);
+        this.drawGrid();
+        
+        return this;
+    }
+
+    public drawWarships = (warships: Warship[], ship: Warship | null)=>{
+        warships.forEach(warship => {  
+            if(warship != ship)
+            this.drawShip(warship);
+        });
+
+        return this;
+    }
+
+    public drawMoveShip = (x: number, y: number, warship: Warship) => {
+        this.context.strokeStyle = "green";
+        this.context.lineWidth = 5;
+        let x1 = 0, y1 = x1
+
+        switch (warship.orientation) {
+            case Orientation.HORIZONTAL:
+                x1 += (warship.length*Brush.FIELD_SIZE);
+                y1 = Brush.FIELD_SIZE;
+                break;
+
+            case Orientation.VERTICAL:
+                y1 += (warship.length*Brush.FIELD_SIZE);
+                x1 = Brush.FIELD_SIZE;
+                break;
+        }
+
+        this.context.strokeRect(x, y, x1, y1);
+        this.context.strokeStyle = "black";
+        this.context.lineWidth = 1;
 
         return this;
     }
