@@ -2,9 +2,9 @@ import Brush from "../class/Brush";
 import Field from "../class/Field";
 import Board from "./Board";
 
-const hits: Field[] = [];
+const hits: object[] = [];
 let previousField: Field = new Field(-1, -1);
-
+let wasHit = true;
 const handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
   const field: Field = Field.fromEvent(e);
   const brush: Brush = Brush.fromEvent(e);
@@ -12,11 +12,12 @@ const handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
   if (field.wasHit(hits))
     return;
 
+
+  hits.push({field: field, hit: wasHit});
   brush
     .clearBoard()
-    .drawX(field, true);
-
-  hits.push(field);
+    .markHits(hits);;
+  
 };
 
 const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -27,7 +28,8 @@ const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     return;
 
   if (!previousField.wasHit(hits))
-    brush.clearBoard();
+    brush.clearBoard()
+    .markHits(hits);
 
   brush.drawCircle(field);
   previousField = field;
