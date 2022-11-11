@@ -9,7 +9,7 @@ function App() {
     <Router>
       <Routes>
         <Route index element={<Game />} />
-        <Route path="leaderboard" element={<Leaderboard/>}/>
+        <Route path="leaderboard" element={<Leaderboard />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>

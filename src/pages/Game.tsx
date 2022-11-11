@@ -1,4 +1,5 @@
-import Board from '../components/Board';
+import AllyBoard from '../components/AllyBoard';
+import EnemyBoard from '../components/EnemyBoard';
 import './Game.css';
 
 const Game = () => {
@@ -7,9 +8,9 @@ const Game = () => {
             <h1>Warships game</h1>
             <h3>Let the battle begin!</h3>
             <div>
-                <Board />
+                <AllyBoard />
                 <button>Start game</button>
-                <Board />
+                <EnemyBoard />
             </div>
         </div>
     );
