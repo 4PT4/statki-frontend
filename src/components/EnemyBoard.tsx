@@ -4,7 +4,7 @@ import Board from "./Board";
 
 const hits: object[] = [];
 let previousField: Field = new Field(-1, -1);
-let wasHit = true;
+let wasHit = false;
 const handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
   const field: Field = Field.fromEvent(e);
   const brush: Brush = Brush.fromEvent(e);
@@ -31,7 +31,7 @@ const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     brush.clearBoard()
     .markHits(hits);
 
-  brush.drawCircle(field);
+  brush.fillShip(field, true);
   previousField = field;
 };
 

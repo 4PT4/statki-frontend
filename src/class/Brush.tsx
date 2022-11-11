@@ -53,9 +53,7 @@ class Brush {
                 this.drawX(hit.field);
                 return this;
             }else{
-                this.context.fillStyle = "rgb(191, 118, 40)";
-                this.context.globalAlpha = 0.5;
-                this.fillShip(hit.field);
+                this.drawCircle(hit.field);
                 this.restore();
             }
             
@@ -99,13 +97,18 @@ class Brush {
                 y += i;
             }
 
-            this.fillShip(new Field(x, y));
+            this.fillShip(new Field(x, y), null);
         }
     }
 
-    public fillShip = (field: Field)=>{
+    public fillShip = (field: Field, move: boolean | null)=>{
         const { x, y }: Position = field.toPosition();
+        if(move){
+            this.context.fillStyle = "rgb(191, 118, 40)";
+            this.context.globalAlpha = 0.5;
+        }
         this.context.fillRect(x, y, Brush.FIELD_SIZE, Brush.FIELD_SIZE);
+        this.restore();
         return this;
     }
 
