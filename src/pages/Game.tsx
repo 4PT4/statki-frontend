@@ -9,7 +9,7 @@ const Game = () => {
             <h3>Let the battle begin!</h3>
             <div>
                 <AllyBoard />
-                <button>Start game</button>
+                <button>Ready</button>
                 <EnemyBoard />
             </div>
         </div>
