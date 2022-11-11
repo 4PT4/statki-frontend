@@ -15,17 +15,15 @@ class Field {
     }
 
     public static fromEvent(e: React.MouseEvent<HTMLCanvasElement>) {
-        const offsetX: number = e.currentTarget.offsetLeft;
-        const offsetY: number = e.currentTarget.offsetTop;
-
-        const mouseX = Math.floor((e.clientX - offsetX) / Brush.FIELD_SIZE);
-        const mouseY = Math.floor((e.clientY - offsetY) / Brush.FIELD_SIZE);
+        const rect = e.currentTarget.getBoundingClientRect();
+        const mouseX = Math.floor((e.clientX - rect.left) / Brush.FIELD_SIZE);
+        const mouseY = Math.floor((e.clientY - rect.top) / Brush.FIELD_SIZE);
         
         return new Field(mouseX, mouseY);
     }
 
-    public wasHit(hits: Field[]): boolean {
-        return hits.some(hit => hit.equals(this));
+    public wasHit(hits: any[]): boolean {
+        return hits.some(hit => hit.field.equals(this));
     }
 
     public toPosition(fn: (actual: number) => number = actual => actual): Position {
@@ -36,4 +34,4 @@ class Field {
     }
 }
 
-export default Field
+export default Field;
