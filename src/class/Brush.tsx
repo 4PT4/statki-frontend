@@ -22,18 +22,18 @@ class Brush {
         return new Brush(context);
     }
 
-    public drawX(field: Field, hit: boolean): Brush {
+    public drawX(field: Field): Brush {
         const { x, y }: Position = field.toPosition();
-        if (hit) this.context.strokeStyle = "red";
-
+        this.context.strokeStyle = "rgb(2, 53, 72)";
+        this.context.lineWidth = 5;
         this.context.beginPath();
         this.context.moveTo(x, y);
         this.context.lineTo(x + Brush.FIELD_SIZE, y + Brush.FIELD_SIZE);
         this.context.moveTo(x + Brush.FIELD_SIZE, y);
         this.context.lineTo(x, y + Brush.FIELD_SIZE);
         this.context.stroke();
-
-        this.context.strokeStyle = "black";
+        
+        this.restore();
         return this;
     }
 
@@ -47,16 +47,35 @@ class Brush {
         return this;
     }
 
+    public markHits = (hits: any[])=>{
+        hits.forEach(hit=>{
+            if(hit.hit){
+                this.drawX(hit.field);
+                return this;
+            }else{
+                this.drawCircle(hit.field);
+                this.restore();
+            }
+            
+            return this;
+        })
+    }
+
     public drawCircle = (field: Field): Brush => {
         const { x, y }: Position = field.toPosition((actual: number) => {
             return actual += Brush.FIELD_SIZE / 2;
         });
-
         this.context.beginPath();
         this.context.arc(x, y, 3, 0, 2 * Math.PI);
         this.context.fill();
-
         return this;
+    }
+
+    private restore = ()=>{
+        this.context.lineWidth = 1;
+        this.context.strokeStyle = "black";
+        this.context.fillStyle = "black";
+        this.context.globalAlpha = 1;
     }
 
     public clearElement = (field: Field): Brush => {
@@ -78,14 +97,18 @@ class Brush {
                 y += i;
             }
 
-            this.fillShip(new Field(x, y));
+            this.fillShip(new Field(x, y), null);
         }
     }
 
-    public fillShip = (field: Field)=>{
+    public fillShip = (field: Field, move: boolean | null)=>{
         const { x, y }: Position = field.toPosition();
+        if(move){
+            this.context.fillStyle = "rgb(191, 118, 40)";
+            this.context.globalAlpha = 0.5;
+        }
         this.context.fillRect(x, y, Brush.FIELD_SIZE, Brush.FIELD_SIZE);
-
+        this.restore();
         return this;
     }
 
@@ -98,7 +121,7 @@ class Brush {
 
     public drawWarships = (warships: Warship[], ship: Warship | null)=>{
         warships.forEach(warship => {  
-            if(warship != ship)
+            if(warship !== ship)
             this.drawShip(warship);
         });
 
@@ -106,7 +129,7 @@ class Brush {
     }
 
     public drawMoveShip = (x: number, y: number, warship: Warship) => {
-        this.context.strokeStyle = "green";
+        this.context.strokeStyle = "rgb(2, 53, 72)";
         this.context.lineWidth = 5;
         let x1 = 0, y1 = x1
 

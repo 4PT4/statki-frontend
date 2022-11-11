@@ -22,8 +22,8 @@ class Field {
         return new Field(mouseX, mouseY);
     }
 
-    public wasHit(hits: Field[]): boolean {
-        return hits.some(hit => hit.equals(this));
+    public wasHit(hits: any[]): boolean {
+        return hits.some(hit => hit.field.equals(this));
     }
 
     public toPosition(fn: (actual: number) => number = actual => actual): Position {
