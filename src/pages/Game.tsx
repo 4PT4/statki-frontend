@@ -1,25 +1,60 @@
 import { useEffect, useState } from 'react';
+import Field from '../class/Field';
 import AllyBoard from '../components/AllyBoard';
 import EnemyBoard from '../components/EnemyBoard';
 import './Game.css';
 
+const createPayload = (event: string, data: object) => {
+    return JSON.stringify({ "event": event, "data": data });
+}
+
+const deserializeMessage = (data: string) => {
+    return JSON.parse(data);
+}
+
 const Game = () => {
     const [status, setStatus] = useState('');
+    let socket: WebSocket;
 
-    let socket:WebSocket;
-    const handleReady = (e:any) => {
+    const handleReady = (e: any) => {
         e.preventDefault();
-        socket.send(JSON.stringify({"event":"ready", "data": {}}))
-        
+        socket.send(createPayload("ready", {}))
     }
+
+    const shootField = (field: Field): Promise<boolean> => {
+        console.log(field);
+
+        const payload = createPayload("shoot", { "x": field.x, "y": field.y });
+        socket.send(payload);
+
+        return new Promise((resolve, reject) => {
+            socket.addEventListener('message', (e) => {
+                const res: any = deserializeMessage(e.data);
+                if (res.event == "hit") {
+                    resolve(res.wasHit);
+                }
+            });
+
+            setTimeout(() => {
+                reject();
+            }, 1000);
+        });
+    }
+
+    const messageHandler = () => {
+        socket.addEventListener('message', (e) => {
+            const res: any = deserializeMessage(e.data);
+
+            if (res.event == "status") {}
+        })
+    }
+
     useEffect(() => {
         socket = new WebSocket('ws://localhost:8000');
         // Listen for messages
         socket.addEventListener('message', (event) => {
-            let stat = JSON.parse(event.data);
-            setStatus(stat.data);
-            
-            // { "event": "ready", "data": "" }
+            const res: any = deserializeMessage(event.data);
+            setStatus(res.status);
         });
     });
 
@@ -27,11 +62,11 @@ const Game = () => {
         <div className="game">
             <h1>Warships game</h1>
             <h3>Let the battle begin!</h3>
-            <p>{status}</p>
+            <h2>{status}</h2>
             <div>
                 <AllyBoard />
                 <button onClick={handleReady}>Ready</button>
-                <EnemyBoard />
+                <EnemyBoard onShoot={shootField} />
             </div>
         </div>
     );
