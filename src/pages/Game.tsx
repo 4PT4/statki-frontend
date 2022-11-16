@@ -14,6 +14,7 @@ const deserializeMessage = (data: string) => {
 
 const Game = () => {
     const [status, setStatus] = useState('');
+    const [warships, setWarships] = useState();
     let socket: WebSocket;
 
     const handleReady = (e: any) => {
@@ -45,13 +46,25 @@ const Game = () => {
         socket.addEventListener('message', (e) => {
             const res: any = deserializeMessage(e.data);
 
-            if (res.event == "status") {}
+            if (res.event == "status") {
+                setStatus(res.status)
+            }
+        })
+    }
+
+    const getWarships = () => {
+        socket.addEventListener('message', (e) => {
+            const res: any = deserializeMessage(e.data);
+            if (res.event == "init") {
+                setWarships(res.data);
+            }
         })
     }
 
     useEffect(() => {
         socket = new WebSocket('ws://localhost:8000');
         // Listen for messages
+        getWarships()
         socket.addEventListener('message', (event) => {
             const res: any = deserializeMessage(event.data);
             setStatus(res.status);
@@ -64,7 +77,7 @@ const Game = () => {
             <h3>Let the battle begin!</h3>
             <h2>{status}</h2>
             <div>
-                <AllyBoard />
+                <AllyBoard warships={warships}/>
                 <button onClick={handleReady}>Ready</button>
                 <EnemyBoard onShoot={shootField} />
             </div>

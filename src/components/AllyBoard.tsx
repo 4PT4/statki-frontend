@@ -4,7 +4,7 @@ import Warship from "../class/Warship";
 import Orientation from "../entities/Orientation";
 import Board from "./Board";
 
-const warships: Warship[] = [];
+let warships: Warship[] = [];
 let dragging: Warship | null;
 let previousField: Field = new Field(-1, -1);
 let initialField: Field;
@@ -202,9 +202,8 @@ warships.push(ship);
 warships.push(shi2);
 
 
-const AllyBoard = () => {
-
-
+const AllyBoard = (props: any) => {
+    warships = props.warships;
     return (<Board onMouseMove={mouseMove} onMouseDown={mouseDown} onMouseUp={mouseUp} drawBoard={drawBoard} />);
 }
 
