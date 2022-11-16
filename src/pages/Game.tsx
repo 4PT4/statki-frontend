@@ -65,8 +65,8 @@ const Game = () => {
         socket = new WebSocket('ws://localhost:8000');
         // Listen for messages
         getWarships()
-        socket.addEventListener('message', (event) => {
-            const res: any = deserializeMessage(event.data);
+        socket.addEventListener('message', (e) => {
+            const res: any = deserializeMessage(e.data);
             setStatus(res.status);
         });
     });
