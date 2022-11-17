@@ -3,11 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import "./Home.css"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrophy, faSignIn } from '@fortawesome/free-solid-svg-icons';
-import Token from '../entities/Token';
-import ErrorMessage from '../entities/ErrorMessage';
-import GameError from '../entities/GameError';
+import Token from '../entities/auth/Token';
+import ErrorMessage from '../entities/network/ErrorMessage';
+import GameError from '../entities/game/GameError';
+import { HomeProps } from '../propTypes';
 
-const Home = (props: { error: string, onError: Function }) => {
+const Home = (props: HomeProps) => {
     const [nickname, setNickname] = useState("");
     const [password, setPassword] = useState("");
 

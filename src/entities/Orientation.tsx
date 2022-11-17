@@ -1,5 +1,5 @@
 enum Orientation {
-  HORIZONTAL,
+  HORIZONTAL = 1,
   VERTICAL
 }
 

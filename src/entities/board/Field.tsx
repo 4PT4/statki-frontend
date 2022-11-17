@@ -1,4 +1,5 @@
-import Position from "../entities/Position";
+import Hitmark from "./Hitmark";
+import Position from "./Position";
 import Brush from "./Brush";
 
 class Field {
@@ -22,7 +23,7 @@ class Field {
         return new Field(mouseX, mouseY);
     }
 
-    public wasHit(hits: any[]): boolean {
+    public wasHit(hits: Hitmark[]): boolean {
         return hits.some(hit => hit.field.equals(this));
     }
 
