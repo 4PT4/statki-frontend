@@ -10,7 +10,6 @@ import './Game.css';
 import WebSocketEvent from '../entities/network/WebSocketEvent';
 import WebSocketMessage from '../entities/network/WebSocketMessage';
 import InitResponse from '../DTOs/InitResponse';
-import StatusResponse from '../DTOs/StatusResponse';
 import GameWarship from '../entities/board/Warship';
 import GameStatus from '../entities/network/GameStatus';
 import ShootResponse from '../DTOs/ShootResponse';
@@ -68,39 +67,29 @@ const Game = () => {
         warships: [],
         dragging: null
     });
-    const [status, setStatus] = useState<string>();
+    const [status, setStatus] = useState(GameStatus.UNKNOWN);
 
-    const handleReady = () => {
-        console.log(gameState.warships);
-        const payload = gameState.warships;
-        sendMessage(WebSocketEvent.READY, {payload});
-    }
-
-    const shootField = (field: Field): Promise<boolean> => {
+    const shotHandler = (field: Field): Promise<boolean> => {
         console.log(field);
-        const payload = {"x": field.x, "y": field.y};
-        sendMessage(WebSocketEvent.SHOOT, payload);
+        const { x, y } = field;
+        sendMessage(WebSocketEvent.SHOOT, { x, y });
 
-        return new Promise( async (resolve, reject) => {
-            const res: ShootResponse = await onMessage(WebSocketEvent.SHOOT);
-            resolve(res.hit);
+        return new Promise(async (resolve, reject) => {
             setTimeout(() => {
                 reject(new GameError("Server didn't respond."));
             }, 1000);
+            const res: ShootResponse = await onMessage(WebSocketEvent.SHOOT);
+            resolve(res.hit);
         });
-    }
+    };
 
-    const startGameHandler = async () => {
-        const res: StartResponse = await onMessage(WebSocketEvent.START)
-        setStatus("Playing against " + res.nickname)
-    }
+    const listenStart = async () => {
+        const res: StartResponse = await onMessage(WebSocketEvent.START);
+        console.log(res);
+        // setStatus("Playing against " + res.nickname)
+    };
 
-    const updateStatus = async () => {
-        const res: StatusResponse = await onMessage(WebSocketEvent.STATUS)
-        setStatus(res.status.toString());
-    }
-
-    const updateWarships = async () => {
+    const listenInit = async () => {
         const res: InitResponse = await onMessage(WebSocketEvent.INIT);
 
         dispatch({
@@ -110,31 +99,29 @@ const Game = () => {
     };
 
     useEffect(() => {
-        setStatus(GameStatus.CONNECTING.toString())
+        setStatus(GameStatus.CONNECTING);
         const url = new URL('ws://localhost:8000');
         const token = localStorage.getItem("token");
         url.searchParams.append("token", token ?? "");
         socket = new WebSocket(url);
-        socket.onopen = () => {
-            setStatus(GameStatus.CONNECTED.toString())
-        }
-        socket.onerror = () => {
-            setStatus(GameStatus.FAILED.toString())
-        }
-        updateWarships();
-        updateStatus();
-        startGameHandler();
+        // socket.onopen = () => {}
+        socket.onerror = () => setStatus(GameStatus.CONNECTION_FAILED);
+        listenInit();
+        listenStart();
     }, []);
 
     return (
         <div className="game">
             <h1>Warships game</h1>
             <h3>Let the battle begin!</h3>
-            <h2>{status}</h2>
+            <h2>{status?.toString()}</h2>
             <div>
                 <AllyBoard gameState={gameState} onRearrange={dispatch} />
-                <button onClick={handleReady}>Ready</button>
-                <EnemyBoard onShoot={shootField} />
+                <button onClick={() => {
+                    const warships = gameState;
+                    sendMessage(WebSocketEvent.READY, { warships });
+                }}>Ready</button>
+                <EnemyBoard onShoot={shotHandler} />
             </div>
         </div>
     );

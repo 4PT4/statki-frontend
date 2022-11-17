@@ -1,4 +1,3 @@
-import Warship from "./entities/Warship";
 import Brush from "./entities/board/Brush";
 import Field from "./entities/board/Field";
 import GameWarship from "./entities/board/Warship";

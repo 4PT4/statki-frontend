@@ -1,11 +1,8 @@
 enum GameStatus {
-    UNKNOWN,
+    UNKNOWN = "",
     CONNECTING = "Connecting to game server...",
-    CONNECTED = "Connected",
-    SEARCHING = "Searching for game...",
-    GAME_START = "game_start",
-    GAME_STOP = "game_stop",
-    FAILED = "Ups! Failed connecting to server"
+    CONNECTION_FAILED = "Failed to connect to game server.",
+    SEARCHING = "Searching for game..."
 }
 
 export default GameStatus;
