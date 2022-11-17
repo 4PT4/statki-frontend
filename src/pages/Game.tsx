@@ -1,4 +1,4 @@
-import _, { create } from 'lodash';
+import _ from 'lodash';
 import { useEffect, useReducer, useState } from 'react';
 import Field from '../entities/board/Field';
 import AllyBoard from '../components/AllyBoard';
@@ -10,7 +10,11 @@ import './Game.css';
 import WebSocketEvent from '../entities/network/WebSocketEvent';
 import WebSocketMessage from '../entities/network/WebSocketMessage';
 import InitResponse from '../DTOs/InitResponse';
+import StatusResponse from '../DTOs/StatusResponse';
 import GameWarship from '../entities/board/Warship';
+import GameStatus from '../entities/network/GameStatus';
+import ShootResponse from '../DTOs/ShootResponse';
+import StartResponse from '../DTOs/StartResponse';
 
 const gameReducer = (state: GameState, action: GameAction): GameState => {
     switch (action.type) {
@@ -64,42 +68,36 @@ const Game = () => {
         warships: [],
         dragging: null
     });
-    const [status, setStatus] = useState();
+    const [status, setStatus] = useState<string>();
 
-    const handleReady = (e: any) => {
-        e.preventDefault();
+    const handleReady = () => {
         console.log(gameState.warships);
-        // socket.send(createPayload("ready", {}))
+        const payload = gameState.warships;
+        sendMessage(WebSocketEvent.READY, {payload});
     }
 
     const shootField = (field: Field): Promise<boolean> => {
         console.log(field);
+        const payload = {"x": field.x, "y": field.y};
+        sendMessage(WebSocketEvent.SHOOT, payload);
 
-        // const payload = createPayload("shoot", { "x": field.x, "y": field.y });
-        // socket.send(payload);
-
-        return new Promise((resolve, reject) => {
-            // socket.addEventListener('message', (e) => {
-            //     const res: any = deserializeMessage(e.data);
-            //     if (res.event === "hit") {
-            //         resolve(res.wasHit);
-            //     }
-            // });
-
+        return new Promise( async (resolve, reject) => {
+            const res: ShootResponse = await onMessage(WebSocketEvent.SHOOT);
+            resolve(res.hit);
             setTimeout(() => {
                 reject(new GameError("Server didn't respond."));
             }, 1000);
         });
     }
 
-    const messageHandler = () => {
-        // socket.addEventListener('message', (e) => {
-        //     const res: any = deserializeMessage(e.data);
+    const startGameHandler = async () => {
+        const res: StartResponse = await onMessage(WebSocketEvent.START)
+        setStatus("Playing against " + res.nickname)
+    }
 
-        //     if (res.event === "status") {
-        //         setStatus(res.status)
-        //     }
-        // })
+    const updateStatus = async () => {
+        const res: StatusResponse = await onMessage(WebSocketEvent.STATUS)
+        setStatus(res.status.toString());
     }
 
     const updateWarships = async () => {
@@ -112,11 +110,20 @@ const Game = () => {
     };
 
     useEffect(() => {
+        setStatus(GameStatus.CONNECTING.toString())
         const url = new URL('ws://localhost:8000');
         const token = localStorage.getItem("token");
         url.searchParams.append("token", token ?? "");
         socket = new WebSocket(url);
+        socket.onopen = () => {
+            setStatus(GameStatus.CONNECTED.toString())
+        }
+        socket.onerror = () => {
+            setStatus(GameStatus.FAILED.toString())
+        }
         updateWarships();
+        updateStatus();
+        startGameHandler();
     }, []);
 
     return (
