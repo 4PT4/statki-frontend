@@ -1,8 +1,9 @@
-import Hitmark from "./Hitmark";
+import GameHitmark from "./GameHitmark";
 import Orientation from "../Orientation";
 import Position from "./Position";
-import Field from "./Field";
-import GameWarship from "./Warship";
+import GameField from "./GameField";
+import GameWarship from "./GameWarship";
+import { GameState } from "../../propTypes";
 
 class Brush {
     private context: CanvasRenderingContext2D;
@@ -17,10 +18,10 @@ class Brush {
         this.context = context;
     }
 
-    public drawX(field: Field): Brush {
+    public drawX(field: GameField): Brush {
         const { x, y }: Position = field.toPosition();
-        this.context.strokeStyle = "rgb(2, 53, 72)";
-        this.context.lineWidth = 5;
+        this.context.strokeStyle = "orange";
+        this.context.lineWidth = 4;
         this.context.beginPath();
         this.context.moveTo(x, y);
         this.context.lineTo(x + Brush.FIELD_SIZE, y + Brush.FIELD_SIZE);
@@ -34,14 +35,14 @@ class Brush {
     public drawGrid = () => {
         for (let i = 0; i < Brush.FIELD_COUNT; i++) {
             for (let j = 0; j < Brush.FIELD_COUNT; j++) {
-                const { x, y }: Position = new Field(i, j).toPosition();
+                const { x, y }: Position = new GameField(i, j).toPosition();
                 this.context.strokeRect(x, y, Brush.FIELD_SIZE, Brush.FIELD_SIZE);
             }
         }
         return this;
     }
 
-    public markHits(hitmarks: Hitmark[]) {
+    public markHits(hitmarks: GameHitmark[]) {
         hitmarks.forEach(h => {
             if (h.wasHit)
                 this.drawX(h.field);
@@ -54,7 +55,7 @@ class Brush {
         return this;
     }
 
-    public drawCircle = (field: Field): Brush => {
+    public drawCircle = (field: GameField): Brush => {
         const { x, y }: Position = field.toPosition((actual: number) => {
             return actual += Brush.FIELD_SIZE / 2;
         });
@@ -83,13 +84,13 @@ class Brush {
                 y += i;
             }
 
-            this.fillField(new Field(x, y), highlight);
+            this.fillField(new GameField(x, y), highlight);
         }
 
         return this;
     }
 
-    public fillField(field: Field, highlight: boolean = false) {
+    public fillField(field: GameField, highlight: boolean = false) {
         if (!field)
             return this;
 
@@ -142,6 +143,17 @@ class Brush {
 
         return this;
     }
+
+    public drawHitmarks = (hitmarks: GameHitmark[]) =>{
+        hitmarks.forEach(element => {
+            if(element.wasHit){
+                this.drawX(element.field);
+            }else{
+                this.drawCircle(element.field);
+            }
+        });
+        this.resetBrush();
+    } 
 }
 
 export default Brush;

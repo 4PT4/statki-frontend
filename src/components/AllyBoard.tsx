@@ -1,18 +1,20 @@
 import { useEffect, useRef } from "react";
 import Brush from "../entities/board/Brush";
-import Field from "../entities/board/Field";
+import GameField from "../entities/board/GameField";
 import { findShip, doesShipCollide, isShipInBoundaries, justifyField, calculateOffset } from "../utils";
 import { AllyBoardProps } from "../propTypes";
 import GameActionType from "../entities/game/GameActionType";
 
 let offset: number;
-let initialField: Field;
+let initialField: GameField;
 
-const AllyBoard = ({ gameState, gameState: { warships, dragging }, onRearrange }: AllyBoardProps) => {
+const AllyBoard = ({ gameState, locked, gameState: { warships, dragging }, onRearrange}: AllyBoardProps) => {
     const canvas = useRef<HTMLCanvasElement | null>(null);
 
     const mouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
-        const field = Field.fromEvent(e);
+        if (locked) return;
+                
+        const field = GameField.fromEvent(e);
 
         const warship = findShip(warships, field.x, field.y);
 
@@ -29,7 +31,8 @@ const AllyBoard = ({ gameState, gameState: { warships, dragging }, onRearrange }
     };
 
     const mouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-        const field: Field = Field.fromEvent(e);
+        if (locked) return;
+        const field: GameField = GameField.fromEvent(e);
 
         if (!dragging)
             return;
@@ -42,6 +45,7 @@ const AllyBoard = ({ gameState, gameState: { warships, dragging }, onRearrange }
     };
 
     const mouseUp = () => {
+        if (locked) return;
         if (!dragging)
             return;
 
@@ -60,7 +64,17 @@ const AllyBoard = ({ gameState, gameState: { warships, dragging }, onRearrange }
             .clearBoard()
             .drawWarships(gameState.warships)
             .drawShip(gameState.dragging, true)
+            .drawHitmarks(gameState.hitmarks)
     }, [gameState]);
+
+    useEffect(() => {
+        const context = canvas.current?.getContext("2d");
+        new Brush(context)
+            .clearBoard()
+            .drawWarships(gameState.warships)
+            .drawShip(gameState.dragging, true)
+    }, [locked]);
+
 
     return (
         <canvas ref={canvas}

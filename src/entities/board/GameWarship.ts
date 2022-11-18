@@ -1,16 +1,16 @@
 import Orientation from "../Orientation";
 import Warship from "../Warship";
-import Field from "./Field";
+import GameField from "./GameField";
 
 class GameWarship {
     id: string;
-    position: Field;
+    position: GameField;
     length: number;
     orientation: Orientation;
 
     constructor(warship: Warship) {
         this.id = warship.id;
-        this.position = new Field(warship.x, warship.y);
+        this.position = new GameField(warship.x, warship.y);
         this.length = warship.length;
         this.orientation = warship.orientation;
     }

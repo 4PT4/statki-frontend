@@ -1,6 +1,6 @@
 import Brush from "./entities/board/Brush";
-import Field from "./entities/board/Field";
-import GameWarship from "./entities/board/Warship";
+import GameField from "./entities/board/GameField";
+import GameWarship from "./entities/board/GameWarship";
 import Orientation from "./entities/Orientation";
 
 
@@ -68,14 +68,14 @@ export const isShipInBoundaries = (warship: GameWarship) => {
     return true;
 };
 
-export const justifyField = (field: Field, orientation: Orientation, offset: number) => {
+export const justifyField = (field: GameField, orientation: Orientation, offset: number) => {
     if (orientation === Orientation.HORIZONTAL)
         field.x += offset;
     else if (orientation === Orientation.VERTICAL)
         field.y += offset;
 };
 
-export const calculateOffset = (warship: GameWarship, field: Field): number => {
+export const calculateOffset = (warship: GameWarship, field: GameField): number => {
     if (warship.orientation === Orientation.HORIZONTAL)
         return warship.position.x - field.x;
     else

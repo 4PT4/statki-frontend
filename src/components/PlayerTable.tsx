@@ -7,6 +7,16 @@ const PlayerTable = (props: { players: Player[] }) => {
         return moment.unix(timestamp).fromNow();
     };
 
+    const calculateWinRate = ({wins, loses}: Player)=>{
+        if (wins === 0 && loses === 0){
+            return 0;
+
+        }
+        return (wins/(wins + loses))*100;
+        
+        
+    }
+
     return (
         <table>
             <thead>
@@ -14,7 +24,7 @@ const PlayerTable = (props: { players: Player[] }) => {
                     <th>Name</th>
                     <th>Wins</th>
                     <th>Loses</th>
-                    <th>Win streak</th>
+                    <th>Win Rate</th>
                     <th>Last seen</th>
                 </tr>
             </thead>
@@ -24,7 +34,7 @@ const PlayerTable = (props: { players: Player[] }) => {
                         <td>{player.nickname}</td>
                         <td>{player.wins}</td>
                         <td>{player.loses}</td>
-                        <td>{player.winStreak}</td>
+                        <th>{calculateWinRate(player)}%</th>
                         <td>{timestampToRelative(player.lastSeen)}</td>
                     </tr>
                 ))}

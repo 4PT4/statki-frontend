@@ -1,8 +1,8 @@
-import Hitmark from "./Hitmark";
+import GameHitmark from "./GameHitmark";
 import Position from "./Position";
 import Brush from "./Brush";
 
-class Field {
+class GameField {
     public x: number;
     public y: number;
 
@@ -11,7 +11,7 @@ class Field {
         this.y = y;
     }
 
-    public equals(field: Field): boolean {
+    public equals(field: GameField): boolean {
         return (this.x === field.x) && (this.y === field.y);
     }
 
@@ -20,10 +20,10 @@ class Field {
         const mouseX = Math.floor((e.clientX - rect.left) / Brush.FIELD_SIZE);
         const mouseY = Math.floor((e.clientY - rect.top) / Brush.FIELD_SIZE);
         
-        return new Field(mouseX, mouseY);
+        return new GameField(mouseX, mouseY);
     }
 
-    public wasHit(hits: Hitmark[]): boolean {
+    public wasHit(hits: GameHitmark[]): boolean {
         return hits.some(hit => hit.field.equals(this));
     }
 
@@ -35,4 +35,4 @@ class Field {
     }
 }
 
-export default Field;
+export default GameField;
