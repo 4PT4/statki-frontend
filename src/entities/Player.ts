@@ -3,6 +3,5 @@ export default interface Player {
     nickname: string;
     wins: number;
     loses: number;
-    winStreak: number;
     lastSeen: number;
 }
