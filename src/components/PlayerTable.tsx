@@ -7,14 +7,11 @@ const PlayerTable = (props: { players: Player[] }) => {
         return moment.unix(timestamp).fromNow();
     };
 
-    const calculateWinRate = ({wins, loses}: Player)=>{
-        if (wins === 0 && loses === 0){
+    const calculateWinRate = ({ wins, loses }: Player) => {
+        if (wins === 0 && loses === 0)
             return 0;
 
-        }
-        return (wins/(wins + loses))*100;
-        
-        
+        return Math.round(wins / (wins + loses) * 100);
     }
 
     return (

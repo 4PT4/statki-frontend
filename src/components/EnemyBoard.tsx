@@ -5,7 +5,7 @@ import GameError from "../entities/game/GameError";
 import GameHitmark from "../entities/board/GameHitmark";
 import { EnemyBoardProps } from "../propTypes";
 
-const EnemyBoard = ({ onShoot, locked }: EnemyBoardProps) => {
+const EnemyBoard = ({ onShoot }: EnemyBoardProps) => {
   const canvas = useRef<HTMLCanvasElement | null>(null);
   const [hitmarks, setHitmarks] = useState<GameHitmark[]>([]);
   const [currentField, setCurrentField] = useState<GameField>(new GameField(-1, -1));
@@ -51,14 +51,6 @@ const EnemyBoard = ({ onShoot, locked }: EnemyBoardProps) => {
       .drawGrid()
       .markHits(hitmarks);
   }, [hitmarks]);
-
-  useEffect(() => {
-    const context = canvas.current?.getContext("2d");
-    new Brush(context)
-      .clearBoard()
-      .drawGrid();
-      setHitmarks([]);
-  }, [locked]);
 
   return (
     <canvas

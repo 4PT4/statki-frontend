@@ -8,12 +8,12 @@ import GameActionType from "../entities/game/GameActionType";
 let offset: number;
 let initialField: GameField;
 
-const AllyBoard = ({ gameState, locked, gameState: { warships, dragging }, onRearrange}: AllyBoardProps) => {
+const AllyBoard = ({ gameState, gameState: { warships, dragging, hitmarks }, onRearrange, locked }: AllyBoardProps) => {
     const canvas = useRef<HTMLCanvasElement | null>(null);
 
     const mouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
         if (locked) return;
-                
+
         const field = GameField.fromEvent(e);
 
         const warship = findShip(warships, field.x, field.y);
@@ -32,7 +32,7 @@ const AllyBoard = ({ gameState, locked, gameState: { warships, dragging }, onRea
 
     const mouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
         if (locked) return;
-        const field: GameField = GameField.fromEvent(e);
+        const field = GameField.fromEvent(e);
 
         if (!dragging)
             return;
@@ -66,15 +66,6 @@ const AllyBoard = ({ gameState, locked, gameState: { warships, dragging }, onRea
             .drawShip(gameState.dragging, true)
             .drawHitmarks(gameState.hitmarks)
     }, [gameState]);
-
-    useEffect(() => {
-        const context = canvas.current?.getContext("2d");
-        new Brush(context)
-            .clearBoard()
-            .drawWarships(gameState.warships)
-            .drawShip(gameState.dragging, true)
-    }, [locked]);
-
 
     return (
         <canvas ref={canvas}

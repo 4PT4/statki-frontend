@@ -8,9 +8,9 @@ import { GameAction, GameState } from '../propTypes';
 import './Game.css';
 import WebSocketEvent from '../entities/network/WebSocketEvent';
 import GameWarship from '../entities/board/GameWarship';
-import Warship from '../entities/Warship';
 import GameExitCode from '../entities/game/GameExitCode';
 import { useNavigate } from 'react-router-dom';
+import { convertWarships } from '../utils';
 
 let socket: WebSocket;
 
@@ -23,6 +23,12 @@ let notifyShot: (hit: boolean) => void;
 
 const onShotResponse = (callback: (hit: boolean) => void) => {
     notifyShot = callback;
+};
+
+const initialState = {
+    warships: [],
+    dragging: null,
+    hitmarks: []
 };
 
 const Game = () => {
@@ -66,10 +72,10 @@ const Game = () => {
                 break;
 
             case WebSocketEvent.HIT:
-                const {x, y} = payload.field;
-                return{
+                const { x, y } = payload.field;
+                return {
                     ...state,
-                    hitmarks: [...state.hitmarks, {wasHit: payload.wasHit, field: new GameField(x, y)}] 
+                    hitmarks: [...state.hitmarks, { wasHit: payload.wasHit, field: new GameField(x, y) }]
                 }
 
             case WebSocketEvent.INIT:
@@ -104,6 +110,12 @@ const Game = () => {
                     }
                 }
 
+            case "reset":
+                return {
+                    ...initialState,
+                    warships: state.warships
+                }
+
             default:
                 break;
         }
@@ -111,11 +123,7 @@ const Game = () => {
         return state;
     };
 
-    const [gameState, dispatch] = useReducer(gameReducer, {
-        warships: [],
-        dragging: null,
-        hitmarks: []
-    });
+    const [gameState, dispatch] = useReducer(gameReducer, initialState);
 
     const shotHandler = (field: GameField): Promise<boolean> => {
         return new Promise((resolve, reject) => {
@@ -133,18 +141,11 @@ const Game = () => {
     };
 
     const readyHandler = () => {
-        const warships: Warship[] = gameState.warships.map(w => {
-            return {
-                id: w.id,
-                length: w.length,
-                x: w.position.x,
-                y: w.position.y,
-                orientation: w.orientation
-            }
-        });
+        dispatch({ type: "reset" })
+        const warships = convertWarships(gameState.warships);
         sendMessage(WebSocketEvent.READY, { warships });
-        setStatus('Looking for player')
         setLocked(true);
+        setStatus('Looking for players...');
     };
 
     useEffect(() => {
@@ -153,12 +154,12 @@ const Game = () => {
         const token = localStorage.getItem("token");
         url.searchParams.append("token", token ?? "");
         socket = new WebSocket(url);
+        
         socket.onmessage = (e) => {
             const message = JSON.parse(JSON.parse(e.data));
-            console.log(message);
             dispatch({ type: message.event, payload: message.data });
         }
-        
+
         socket.onerror = () => navigate('/login');
     }, []);
 
@@ -168,9 +169,9 @@ const Game = () => {
             <h3>Let the battle begin!</h3>
             <p>{status}</p>
             <div>
-                <AllyBoard gameState={gameState} locked={locked} onRearrange={dispatch}  />
+                <AllyBoard gameState={gameState} locked={locked} onRearrange={dispatch} />
                 <button onClick={readyHandler}>Ready</button>
-                <EnemyBoard onShoot={shotHandler} locked={locked}/>
+                <EnemyBoard onShoot={shotHandler} />
             </div>
         </div>
     );

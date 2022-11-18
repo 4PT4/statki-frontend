@@ -3,7 +3,6 @@ import Orientation from "../Orientation";
 import Position from "./Position";
 import GameField from "./GameField";
 import GameWarship from "./GameWarship";
-import { GameState } from "../../propTypes";
 
 class Brush {
     private context: CanvasRenderingContext2D;

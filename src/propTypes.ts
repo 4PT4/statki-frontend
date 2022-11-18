@@ -8,13 +8,12 @@ import { HitMessage, InitMessage, ShootMessage, StartMessage, StopMessage } from
 
 export interface AllyBoardProps {
     gameState: GameState;
-    locked: boolean;
     onRearrange: Dispatch<GameAction>;
+    locked: boolean;
 }
 
 export interface EnemyBoardProps {
     onShoot: (field: GameField) => Promise<boolean>;
-    locked: boolean;
 }
 
 export interface HomeProps {
@@ -32,6 +31,7 @@ export type GameAction =
     | { type: WebSocketEvent.SHOOT, payload: ShootMessage }
     | { type: WebSocketEvent.STOP, payload: StopMessage }
     | { type: WebSocketEvent.HIT, payload: HitMessage }
+    | { type: "reset", payload?: undefined }
 
 
 export interface GameState {

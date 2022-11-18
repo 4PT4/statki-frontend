@@ -2,6 +2,7 @@ import Brush from "./entities/board/Brush";
 import GameField from "./entities/board/GameField";
 import GameWarship from "./entities/board/GameWarship";
 import Orientation from "./entities/Orientation";
+import Warship from "./entities/Warship";
 
 
 export const findShip = (warships: GameWarship[], giveX: number, giveY: number, offset: number = 0) => {
@@ -80,4 +81,14 @@ export const calculateOffset = (warship: GameWarship, field: GameField): number 
         return warship.position.x - field.x;
     else
         return warship.position.y - field.y;
+};
+
+export const convertWarships = (warship: GameWarship[]): Warship[] => {
+    return warship.map(w => ({
+        id: w.id,
+        length: w.length,
+        x: w.position.x,
+        y: w.position.y,
+        orientation: w.orientation
+    }));
 };
