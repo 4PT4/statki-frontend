@@ -1,46 +1,65 @@
-import Brush from "../class/Brush";
-import Field from "../class/Field";
-import Board from "./Board";
+import { useEffect, useRef, useState } from "react";
+import Brush from "../entities/board/Brush";
+import Field from "../entities/board/Field";
+import GameError from "../entities/game/GameError";
+import Hitmark from "../entities/board/Hitmark";
+import { EnemyBoardProps } from "../propTypes";
 
-const hits: object[] = [];
-let previousField: Field = new Field(-1, -1);
-let wasHit = false;
-const handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
-  const field: Field = Field.fromEvent(e);
-  const brush: Brush = Brush.fromEvent(e);
+const EnemyBoard = ({ onShoot }: EnemyBoardProps) => {
+  const canvas = useRef<HTMLCanvasElement | null>(null);
+  const [hitmarks, setHitmarks] = useState<Hitmark[]>([]);
+  const [currentField, setCurrentField] = useState<Field>(new Field(-1, -1));
 
-  if (field.wasHit(hits))
-    return;
+  const handleClick = async (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const field: Field = Field.fromEvent(e);
 
+    if (field.wasHit(hitmarks))
+      return;
 
-  hits.push({field: field, hit: wasHit});
-  brush
-    .clearBoard()
-    .markHits(hits);;
-  
-};
+    try {
+      const wasHit = await onShoot(field);
+      setHitmarks([...hitmarks, { field, wasHit }]);
+    } catch (e) {
+      if (e instanceof GameError) {
+        console.log(e.message);
+      }
+    }
+  };
 
-const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-  const field: Field = Field.fromEvent(e);
-  const brush: Brush = Brush.fromEvent(e);
+  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const field: Field = Field.fromEvent(e);
 
-  if (field.equals(previousField) || field.wasHit(hits))
-    return;
+    if (field.equals(currentField) || field.wasHit(hitmarks))
+      return;
 
-  if (!previousField.wasHit(hits))
-    brush.clearBoard()
-    .markHits(hits);
+    setCurrentField(field);
+  };
 
-  brush.fillShip(field, true);
-  previousField = field;
-};
+  useEffect(() => {
+    const context = canvas.current?.getContext("2d");
+    new Brush(context)
+      .clearBoard()
+      .drawGrid()
+      .fillField(currentField, true)
+      .markHits(hitmarks);
+  }, [currentField]);
 
-const drawBoard = (context: CanvasRenderingContext2D | null)=>{
-    new Brush(context).drawGrid();
+  useEffect(() => {
+    const context = canvas.current?.getContext("2d");
+    new Brush(context)
+      .clearBoard()
+      .drawGrid()
+      .markHits(hitmarks);
+  }, [hitmarks]);
+
+  return (
+    <canvas
+      ref={canvas}
+      onMouseMove={handleMouseMove}
+      onClick={handleClick}
+      height={Brush.BOARD_SIZE}
+      width={Brush.BOARD_SIZE}></canvas>
+  );
 }
 
-function EnemyBoard(){
-    return(<Board onMouseMove={handleMouseMove} onClick={handleClick} drawBoard={drawBoard}/>)
-}
-
-export default EnemyBoard
+export default EnemyBoard;
