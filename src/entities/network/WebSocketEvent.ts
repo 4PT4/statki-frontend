@@ -3,7 +3,8 @@ enum WebSocketEvent {
     INIT = "init",
     READY = "ready",
     SHOOT = "shoot",
-    START = "start"
+    START = "start",
+    STOP = "stop"
 }
 
 export default WebSocketEvent;

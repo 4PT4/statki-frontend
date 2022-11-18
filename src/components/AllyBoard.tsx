@@ -21,7 +21,10 @@ const AllyBoard = ({ gameState, gameState: { warships, dragging }, onRearrange }
 
         offset = calculateOffset(warship, field);
 
-        onRearrange({ type: GameActionType.START_DRAG, payload: warship });
+        onRearrange({
+            type: GameActionType.START_DRAG,
+            payload: warship
+        });
         initialField = warship.position;
     };
 
@@ -38,7 +41,7 @@ const AllyBoard = ({ gameState, gameState: { warships, dragging }, onRearrange }
         });
     };
 
-    const mouseUp = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const mouseUp = () => {
         if (!dragging)
             return;
 

@@ -5,7 +5,7 @@ import GameError from "../entities/game/GameError";
 import Hitmark from "../entities/board/Hitmark";
 import { EnemyBoardProps } from "../propTypes";
 
-const EnemyBoard = (props: EnemyBoardProps) => {
+const EnemyBoard = ({ onShoot }: EnemyBoardProps) => {
   const canvas = useRef<HTMLCanvasElement | null>(null);
   const [hitmarks, setHitmarks] = useState<Hitmark[]>([]);
   const [currentField, setCurrentField] = useState<Field>(new Field(-1, -1));
@@ -17,7 +17,7 @@ const EnemyBoard = (props: EnemyBoardProps) => {
       return;
 
     try {
-      const wasHit = await props.onShoot(field);
+      const wasHit = await onShoot(field);
       setHitmarks([...hitmarks, { field, wasHit }]);
     } catch (e) {
       if (e instanceof GameError) {
