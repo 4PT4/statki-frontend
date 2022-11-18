@@ -8,7 +8,7 @@ import GameActionType from "../entities/game/GameActionType";
 let offset: number;
 let initialField: GameField;
 
-const AllyBoard = ({ gameState, gameState: { warships, dragging, hitmarks }, onRearrange, locked }: AllyBoardProps) => {
+const AllyBoard = ({ gameState, gameState: { warships, dragging }, onRearrange, locked }: AllyBoardProps) => {
     const canvas = useRef<HTMLCanvasElement | null>(null);
 
     const mouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
