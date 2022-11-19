@@ -1,4 +1,4 @@
-import { Dispatch } from "react";
+import { Dispatch, MouseEvent } from "react";
 import GameField from "./entities/board/GameField";
 import GameHitmark from "./entities/board/GameHitmark";
 import GameWarship from "./entities/board/GameWarship";
@@ -13,7 +13,8 @@ export interface AllyBoardProps {
 }
 
 export interface EnemyBoardProps {
-    onShoot: (field: GameField) => Promise<boolean>;
+    onShoot: (field: MouseEvent<HTMLCanvasElement>) => void;
+    hitmarks: GameHitmark[]
 }
 
 export interface HomeProps {
@@ -31,7 +32,6 @@ export type GameAction =
     | { type: WebSocketEvent.SHOOT, payload: ShootMessage }
     | { type: WebSocketEvent.STOP, payload: StopMessage }
     | { type: WebSocketEvent.HIT, payload: HitMessage }
-    | { type: "reset", payload?: undefined }
 
 
 export interface GameState {

@@ -11,6 +11,8 @@ import GameWarship from '../entities/board/GameWarship';
 import GameExitCode from '../entities/game/GameExitCode';
 import { useNavigate } from 'react-router-dom';
 import { convertWarships } from '../utils';
+import GameHitmark from '../entities/board/GameHitmark';
+import styles from './Game.module.css';
 
 let socket: WebSocket;
 
@@ -34,6 +36,7 @@ const initialState = {
 const Game = () => {
     const [status, setStatus] = useState<string>();
     const [locked, setLocked] = useState<boolean>(false);
+    const [enemyHitmarks, setEnemyHitmarks] = useState<GameHitmark[]>([]);
 
     const navigate = useNavigate();
 
@@ -61,7 +64,11 @@ const Game = () => {
             case WebSocketEvent.STOP:
                 updateGameStatus(payload.code);
                 setLocked(false);
-                break;
+                setEnemyHitmarks([]);
+                return {
+                    ...initialState,
+                    warships: state.warships
+                }
 
             case WebSocketEvent.START:
                 setStatus(`Playing against ${payload.nickname} (${payload.winRate}% W/R)`)
@@ -72,15 +79,14 @@ const Game = () => {
                 break;
 
             case WebSocketEvent.HIT:
-                const { x, y } = payload.field;
+                const { wasHit, field: { x, y } } = payload;
                 return {
                     ...state,
-                    hitmarks: [...state.hitmarks, { wasHit: payload.wasHit, field: new GameField(x, y) }]
+                    hitmarks: [...state.hitmarks, { wasHit, field: new GameField(x, y) }]
                 }
 
             case WebSocketEvent.INIT:
                 setStatus(`Hi ${payload.nickname}!`)
-                console.log(payload);
                 return {
                     ...state,
                     warships: payload.warships.map(w => new GameWarship(w))
@@ -91,7 +97,6 @@ const Game = () => {
                     ...state,
                     warships: state.warships.filter(w => w !== payload),
                     dragging: payload
-
                 }
 
             case GameActionType.STOP_DRAG:
@@ -110,12 +115,6 @@ const Game = () => {
                     }
                 }
 
-            case "reset":
-                return {
-                    ...initialState,
-                    warships: state.warships
-                }
-
             default:
                 break;
         }
@@ -125,7 +124,7 @@ const Game = () => {
 
     const [gameState, dispatch] = useReducer(gameReducer, initialState);
 
-    const shotHandler = (field: GameField): Promise<boolean> => {
+    const shoot = (field: GameField): Promise<boolean> => {
         return new Promise((resolve, reject) => {
             onShotResponse((hit: boolean) => {
                 resolve(hit);
@@ -140,8 +139,23 @@ const Game = () => {
         });
     };
 
+    const shotHandler = async (e: React.MouseEvent<HTMLCanvasElement>) => {
+        const field: GameField = GameField.fromEvent(e);
+
+        if (field.wasHit(enemyHitmarks))
+            return;
+
+        try {
+            const wasHit = await shoot(field);
+            setEnemyHitmarks([...enemyHitmarks, { field, wasHit }]);
+        } catch (e) {
+            if (e instanceof GameError) {
+                console.log(e.message);
+            }
+        }
+    };
+
     const readyHandler = () => {
-        dispatch({ type: "reset" })
         const warships = convertWarships(gameState.warships);
         sendMessage(WebSocketEvent.READY, { warships });
         setLocked(true);
@@ -154,7 +168,7 @@ const Game = () => {
         const token = localStorage.getItem("token");
         url.searchParams.append("token", token ?? "");
         socket = new WebSocket(url);
-        
+
         socket.onmessage = (e) => {
             const message = JSON.parse(JSON.parse(e.data));
             dispatch({ type: message.event, payload: message.data });
@@ -170,8 +184,8 @@ const Game = () => {
             <p>{status}</p>
             <div>
                 <AllyBoard gameState={gameState} locked={locked} onRearrange={dispatch} />
-                <button onClick={readyHandler}>Ready</button>
-                <EnemyBoard onShoot={shotHandler} />
+                <button onClick={readyHandler} disabled={locked}>Ready</button>
+                <EnemyBoard onShoot={shotHandler} hitmarks={enemyHitmarks} />
             </div>
         </div>
     );

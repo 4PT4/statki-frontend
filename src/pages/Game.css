@@ -23,6 +23,10 @@ h3 {
     box-shadow: rgb(1 1 0 / 35%) 0px 5px 15px;
 }
 
+.game button:disabled {
+    filter: grayscale(1);
+}
+
 .game button:hover {
     cursor: pointer;
     background-color: rgb(161, 103, 40);
